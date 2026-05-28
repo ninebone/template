@@ -6,26 +6,32 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // 1. 현재 실행 중인 폴더명을 프로젝트명으로 자동 인식
-const newName = path.basename(__dirname);
+const newName = path.basename(__dirname); 
 
-const oldName = 'nine-template';
-const pascalOldName = 'NineTemplate';
+const oldName = 'nine-template'; 
+const pascalOldName = 'NineTemplate'; 
 const pascalNewName = newName
     .split('-')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join('');
 
-// 2. 치환 대상 파일 및 폴더 목록
+// 2. 치환 대상 파일 및 폴더 목록 (인텔리제이 설정 파일 정확히 매핑)
 const targets = [
     { type: 'file', path: 'package.json' },
     { type: 'file', path: 'README.md' },
     { type: 'file', path: 'nine-template-backend/settings.gradle' },
     { type: 'file', path: 'nine-template-backend/build.gradle' },
     { type: 'file', path: 'nine-template-backend/src/main/resources/application.yml' },
-    { type: 'file', path: '.idea/runConfigurations/NineEduAdminApplication.xml' }, // 실제 xml 파일명으로 매핑 필요
+    
+    // 💡 [중요] 인텔리제이 서비스 탭 및 실행 버튼의 경로 설정을 새 폴더명으로 치환
+    { type: 'file', path: '.idea/services.xml' },
+    { type: 'file', path: '.idea/runConfigurations/Backend.xml' },
+    { type: 'file', path: '.idea/runConfigurations/Frontend.xml' },
+    
     { type: 'file', path: 'nine-template-frontend/package.json' },
-    { type: 'file', path: 'nine-template-frontend/vite.config.ts' },
+    { type: 'file', path: 'nine-template-frontend/vite.config.js' },
     { type: 'file', path: 'nine-template-frontend/index.html' },
+    
     { type: 'dir', from: 'nine-template-backend', to: `${newName}-backend` },
     { type: 'dir', from: 'nine-template-frontend', to: `${newName}-frontend` }
 ];
@@ -44,7 +50,7 @@ function replaceFileContent(filePath) {
     // IntelliJ 실행 프로필을 test에서 local로 자동 치환
     if (filePath.includes('runConfigurations')) {
         content = content.split('-Dspring.profiles.active=test').join('-Dspring.profiles.active=local');
-        console.log(`⚙️ IntelliJ 실행 프로필 변경 완료 (test -> local)`);
+        console.log(`⚙️ IntelliJ 실행 프로필 변경 완료 (test -> local) : ${filePath}`);
     }
 
     fs.writeFileSync(fullPath, content, 'utf8');
@@ -66,12 +72,10 @@ try {
         }
     });
 
-    // 💡 5. [환경 변수 자동 생성] 사용자가 세팅했던 파일 구조를 그대로 자동 생성해 줍니다.
+    // 5. 프론트엔드 환경 변수 자동 생성
     const feFolderPath = path.join(__dirname, `${newName}-frontend`);
     if (fs.existsSync(feFolderPath)) {
-        // .env 파일 생성 (기본값 빈 값 혹은 기본 세팅)
         fs.writeFileSync(path.join(feFolderPath, '.env'), 'VITE_API_BASE_URL=\n', 'utf8');
-        // .env.development 파일 생성 (/api 세팅)
         fs.writeFileSync(path.join(feFolderPath, '.env.development'), 'VITE_API_BASE_URL=/api\n', 'utf8');
         console.log(`📝 프론트엔드 .env 및 .env.development 파일 생성 완료!`);
     }
