@@ -1,0 +1,30 @@
+plugins {
+    id 'base' // build, clean 등 기본 태스크를 제공합니다.
+    id "com.github.node-gradle.node" version "7.0.2"
+}
+
+node {
+    download = true
+    version = "25.6.0"
+}
+
+// 1. 리액트 빌드 실행 태스크
+task buildReact(type: NpmTask) {
+    args = ['run', 'build']
+}
+
+// 2. npm install 후 빌드까지 수행하는 태스크
+task installAndBuild(type: NpmTask) {
+    dependsOn npmInstall
+    args = ['run', 'build']
+}
+
+// 3. 이제 'build' 태스크가 존재하므로 의존성을 걸 수 있습니다.
+tasks.named('build') {
+    dependsOn buildReact
+}
+
+// (선택) clean 시 리액트의 build 폴더도 지우고 싶다면 추가
+clean {
+    delete "build"
+}

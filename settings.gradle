@@ -1,0 +1,4 @@
+rootProject.name = 'nine-template'
+
+include 'nine-template-backend'
+include 'nine-template-frontend'

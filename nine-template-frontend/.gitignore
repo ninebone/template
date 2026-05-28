@@ -1,0 +1,55 @@
+# ==========================================
+# 📦 의존성 라이브러리 및 빌드 결과물
+# ==========================================
+node_modules/
+/dist/
+/dist-ssr/
+
+# ==========================================
+# 🚨 환경 변수 파일 (가장 중요! OpenAI, Gemini 키 보호)
+# ==========================================
+.env
+.env.development
+.env.production
+.env.local
+.env.development.local
+.env.production.local
+.env.*.local
+*.local
+
+# 💡 [예외 처리] 변수명 틀만 적어둔 예시 파일은 깃에 올라가야 합니다.
+!.env.example
+
+# ==========================================
+# 📝 로그 파일
+# ==========================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ==========================================
+# 🛠️ 에디터 및 OS 임시 파일 (하위 모듈 전용 사양)
+# ==========================================
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.eslintcache
+.vite/
+
+# VS Code (개인 확장 프로그램 추천 설정 제외하고 차단)
+.vscode/*
+!.vscode/extensions.json
+
+# IntelliJ IDEA (프론트엔드 폴더 내부의 세팅 파일만 차단)
+# 루트의 runConfigurations 설정을 방해하지 않도록 파일명/확장자 단위로 차단합니다.
+*.iml
+.idea/modules/
+.idea/workspace.xml
+.idea/tasks.xml

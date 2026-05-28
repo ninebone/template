@@ -1,0 +1,22 @@
+### IntelliJ IDEA ###
+.idea/
+!.idea/runConfigurations/     # 💡 우리가 만든 실행 버튼 파일들은 제외하지 마라!
+!.idea/services.xml            # 💡 Services 탭 자동 활성화 설정은 제외하지 마라!
+
+# ❌ 개발자 개인의 로컬 기록/잔재들은 철저히 차단
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries/
+.idea/shelf/
+.idea/dataSources/
+.idea/dataSources.local.xml
+
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+# 로컬 환경 변수 파일 (API 키 등 민감 정보 보호)
+/src/main/resources/application-test.yml

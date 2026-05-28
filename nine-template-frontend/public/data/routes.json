@@ -1,0 +1,10 @@
+[
+  {
+    "level": 1,
+    "id": "home",
+    "parentId": null,
+    "name": "메인 대시보드",
+    "desc": "시스템의 전체적인 현황을 한눈에 보여주는 메인 화면",
+    "class": "icon-home"
+  }
+]

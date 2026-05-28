@@ -1,0 +1,93 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '4.0.2' // 안정적인 4.0.x 버전 싱크
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.nine'
+version = '0.0.1-SNAPSHOT'
+description = 'nine-template-backend'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+// 💡 롬복(Lombok)과 이노테이션 프로세서 간의 의존성 전파 규칙 정리
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // 1. 핵심 커스텀 엔진 (필요 시 주석 해제)
+    implementation("com.nine-lab:nine-mu:0.0.10")
+
+    // 2. 스프링 부트 웹 & 데이터베이스 환경 정리
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.1'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // 3. 유틸리티 및 데이터 파싱 의존성 내장
+    implementation 'org.apache.commons:commons-collections4:4.4'
+    //implementation 'org.jsoup:jsoup:1.17.2'
+
+    // 4. 컴파일 타임 최적화 (Lombok)
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // 5. 테스트 환경 정리
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:4.0.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+
+// 💡 [치명적 핵심] 리플렉션이나 MyBatis 매퍼에서 파라미터 이름을 보존하기 위한 설정 매립
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs << '-parameters'
+}
+
+// =========================================================================
+// 🚀 배포 및 프론트엔드 빌드 번들링 자동화 영역
+// =========================================================================
+
+// 1. 실행 가능한 단일 JAR 파일 빌드 시 메인 클래스 명시
+bootJar {
+    mainClass = 'com.nine.template.NineTemplateBackendApplication'
+}
+
+// 2. 일반 jar 빌드를 비활성화하여 bootJar 생성을 보호하고 충돌 방지
+jar {
+    enabled = false
+}
+
+/**
+ * 3. 프론트엔드 빌드 자동화 및 정적 자원 통합 테스크
+ */
+task copyFrontEnd(type: Copy) {
+    // 템플릿의 프론트엔드 폴더(Vite) 빌드 결과물 위치 지정
+    from("${project(':nine-template-frontend').projectDir}/dist") {
+        into ""
+    }
+    // Gradle 최신 사양에 맞춘 최상위 static 빌드 디렉토리 매핑
+    into "${project.layout.buildDirectory.dir('resources/main/static').get()}"
+}
+
+// 프론트엔드 자체 빌드 스크립트 연결
+copyFrontEnd.dependsOn(':nine-template-frontend:installAndBuild')
+
+// 💡 [핵심 수정] 로컬 기동(processResources) 시에는 프론트엔드 빌드를 수행하지 않습니다.
+// 대신 최종 배포 파일(bootJar)을 만들 때만 자동으로 빌드 및 복사가 수행되도록 설정합니다.
+bootJar.dependsOn(copyFrontEnd)
