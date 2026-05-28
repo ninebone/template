@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+    <component name="ServicesViewManager">
+        <option name="viewStates">
+            <list>
+                <serviceView />
+                <serviceConfiguration type="Application" />
+                <serviceConfiguration type="ShConfigurationType" />
+                <serviceConfiguration type="CompoundRunConfigurationType" />
+            </list>
+        </option>
+    </component>
+</project>

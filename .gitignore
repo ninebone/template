@@ -1,15 +1,19 @@
 # ==========================================
 # IntelliJ IDEA 템플릿 설정 (실행 버튼 공유)
 # ==========================================
-.idea/
-!.idea/runConfigurations/     # 💡 우리가 만든 실행 버튼 파일들은 제외하지 마라!
-!.idea/services.xml            # 💡 Services 탭 자동 활성화 설정은 제외하지 마라!
+# 1. .idea 폴더 자체는 추적하되, 내부 파일들을 기본적으로 제외합니다.
+.idea/*
 
-# ❌ 개발자 개인 로컬 설정은 절대 올라가면 안 되므로 철저히 차단
+# 2. 실행 구성을 담은 핵심 폴더와 설정은 제외하지 않도록 길을 열어줍니다.
+!.idea/runConfigurations/
+!.idea/services.xml
+
+# ❌ 개발자 개인 로컬 잔재들은 확실하게 차단 (보안 및 충돌 방지)
 .idea/workspace.xml
 .idea/tasks.xml
 .idea/dictionaries/
 .idea/shelf/
+.idea/dataSources/
 
 # ==========================================
 # 에디터 및 OS 임시 파일
@@ -31,6 +35,5 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 *.local
-
 .gradle/
 build/
