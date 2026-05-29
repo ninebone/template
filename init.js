@@ -17,7 +17,7 @@ const pascalNewName = newName
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join('');
 
-// 하이픈(-) 제거하고 소문자 공백 제거한 패키지명 가공 (예: testapp)
+// 하이픈(-) 제거하고 소문자 패키지명 가공 (예: testapp)
 const packageNewName = newName.split('-').join('').toLowerCase();
 
 console.log(`🚀 [${newName}] 기반 정밀 리팩토링 초기화를 시작합니다...`);
@@ -28,14 +28,14 @@ function replaceFileContent(fullPath) {
 
     let content = fs.readFileSync(fullPath, 'utf8');
 
-    // 순서대로 정밀 매핑 치환
+    // 기본 치환 규칙
     content = content.split('com.nine.template').join(`com.${packageNewName}.backend`);
     content = content.split('nine-template-backend').join(`${newName}-backend`);
     content = content.split('nine-template-frontend').join(`${newName}-frontend`);
     content = content.split('nine-template').join(newName);
     content = content.split(pascalOldName).join(pascalNewName);
 
-    // IntelliJ 실행 프로필을 test에서 local로 자동 치환
+    // IntelliJ 실행 구성 프로필 자동 치환 (test -> local)
     if (fullPath.includes('runConfigurations')) {
         content = content.split('-Dspring.profiles.active=test').join('-Dspring.profiles.active=local');
     }
@@ -43,11 +43,10 @@ function replaceFileContent(fullPath) {
     fs.writeFileSync(fullPath, content, 'utf8');
 }
 
-// 3. 디렉토리 재귀 탐색하며 모든 텍스트 파일 치환하는 함수 (필터링 조건 완벽 교정 🎯)
+// 3. 디렉토리 재귀 탐색하며 모든 텍스트 파일 치환하는 함수
 function globalTextLookup(dirPath) {
     if (!fs.existsSync(dirPath)) return;
 
-    // 주소 끝자리가 아닌, 순수한 폴더명 자체를 기준으로 철저하게 차단합니다.
     const folderName = path.basename(dirPath);
     const excludeFolders = ['.git', 'node_modules', '.gradle', 'build', 'dist'];
     if (excludeFolders.includes(folderName)) return;
@@ -56,8 +55,10 @@ function globalTextLookup(dirPath) {
     files.forEach(file => {
         const fullPath = path.join(dirPath, file);
 
-        // 현재 실행 중인 init.js 자기 자신은 절대 건드리지 않고 패스
         if (fullPath === __filename) return;
+
+        // 유령 파일 생성 및 매핑 꼬임을 방지하기 위해 modules.xml은 텍스트 치환에서 완전히 제외
+        if (file === 'modules.xml') return;
 
         if (fs.statSync(fullPath).isDirectory()) {
             globalTextLookup(fullPath);
@@ -66,7 +67,7 @@ function globalTextLookup(dirPath) {
                 file.endsWith('.java') || file.endsWith('.yml') || file.endsWith('.xml') ||
                 file.endsWith('.json') || file.endsWith('.js') || file.endsWith('.ts') ||
                 file.endsWith('.tsx') || file.endsWith('.html') || file.endsWith('.gradle') ||
-                file.endsWith('.md') || file.endsWith('.iml') || file === '.env' || file.startsWith('.env.')
+                file.endsWith('.md') || file === '.env' || file.startsWith('.env.')
             ) {
                 replaceFileContent(fullPath);
             }
@@ -74,7 +75,6 @@ function globalTextLookup(dirPath) {
     });
 }
 
-// Helper: 폴더가 비어있으면 삭제하는 함수
 function removeEmptyDirs(dirPath) {
     if (!fs.existsSync(dirPath)) return;
     if (!fs.statSync(dirPath).isDirectory()) return;
@@ -97,7 +97,30 @@ try {
         fs.writeFileSync(path.join(originalFePath, '.env.development'), 'VITE_API_BASE_URL=/api\n', 'utf8');
     }
 
-    // [순서 2] 자바 메인/테스트 파일명 먼저 안전하게 물리 리네임
+    // [순서 2] 원본에 잔존할 수 있는 옛날 IntelliJ 캐시 및 모듈 매핑용 파일 선제 파쇄
+    // 이 작업이 먼저 완료되어야 텍스트 치환 도중 꼬인 문자열 파일이 유실되거나 부활하지 않습니다.
+    const ideaModulesXml = path.join(__dirname, '.idea/modules.xml');
+    if (fs.existsSync(ideaModulesXml)) {
+        fs.unlinkSync(ideaModulesXml);
+    }
+    const ideaModulesDir = path.join(__dirname, '.idea/modules');
+    if (fs.existsSync(ideaModulesDir)) {
+        fs.rmSync(ideaModulesDir, { recursive: true, force: true });
+    }
+    const oldBackendIml = path.join(__dirname, 'nine-template-backend/nine-template-backend.iml');
+    if (fs.existsSync(oldBackendIml)) {
+        fs.unlinkSync(oldBackendIml);
+    }
+    const oldFrontendIml = path.join(__dirname, 'nine-template-frontend.iml');
+    if (fs.existsSync(oldFrontendIml)) {
+        fs.unlinkSync(oldFrontendIml);
+    }
+
+    // [순서 3] 정리 완료된 구조 상태에서 순수 소스코드 전역 텍스트 치환
+    globalTextLookup(__dirname);
+    console.log(`✅ 모든 대상 파일 내 텍스트 정밀 치환 완료`);
+
+    // [순서 4] 자바 메인/테스트 파일명 먼저 안전하게 물리 리네임
     const oldMainJavaDir = path.join(__dirname, 'nine-template-backend/src/main/java/com/nine/template');
     const oldTestJavaDir = path.join(__dirname, 'nine-template-backend/src/test/java/com/nine/template');
 
@@ -114,7 +137,7 @@ try {
         }
     }
 
-    // [순서 3] 물리적 자바 패키지 폴더 구조 리팩토링 (com.nine.template -> com.새이름.backend)
+    // [순서 5] 물리적 자바 패키지 폴더 구조 리팩토링 (com.nine.template -> com.새이름.backend)
     const relocateJavaStructure = (rootType) => {
         const oldJavaRoot = path.join(__dirname, `nine-template-backend/src/${rootType}/java/com/nine/template`);
         if (!fs.existsSync(oldJavaRoot)) return;
@@ -134,17 +157,7 @@ try {
     removeEmptyDirs(path.join(__dirname, 'nine-template-backend/src/main/java/com/nine'));
     removeEmptyDirs(path.join(__dirname, 'nine-template-backend/src/test/java/com/nine'));
 
-    // [순서 4] 백엔드 및 프론트엔드 모듈 내부의 .iml 파일명 물리 리네임
-    const oldBackendIml = path.join(__dirname, 'nine-template-backend/nine-template-backend.iml');
-    if (fs.existsSync(oldBackendIml)) {
-        fs.renameSync(oldBackendIml, path.join(__dirname, `nine-template-backend/${newName}-backend.iml`));
-    }
-
-    if (fs.existsSync(path.join(__dirname, 'nine-template-frontend.iml'))) {
-        fs.renameSync(path.join(__dirname, 'nine-template-frontend.iml'), path.join(__dirname, `${newName}-frontend.iml`));
-    }
-
-    // [순서 5] 껍데기 대형 프로젝트 대단위 폴더명 최종 리네임
+    // [순서 6] 백엔드/프론트엔드 대형 프로젝트 대단위 폴더명 최종 물리 변경
     const dirTargets = [
         { from: 'nine-template-backend', to: `${newName}-backend` },
         { from: 'nine-template-frontend', to: `${newName}-frontend` }
@@ -157,15 +170,11 @@ try {
         }
     });
 
-    // [순서 6] 🎯 물리 배치가 종료되어 완벽하게 정돈된 새 구조를 대상으로 전역 텍스트 정밀 치환!!
-    globalTextLookup(__dirname);
-    console.log(`✅ 구조 변경 완료된 전체 파일 내 텍스트 정밀 치환 전면 완료`);
-
-    // [순서 7] 초기화 스크립트 자가 폭파
+    // [순서 7] 초기화 완료 후 스크립트 자가 삭제
     console.log('\n🔥 초기화 스크립트(init.js)를 자가 삭제합니다.');
     fs.unlinkSync(__filename);
 
-    console.log(`\n🎉 모든 프로젝트 초기화가 오차 없이 완료되었습니다! IntelliJ에서 프로젝트를 열어주세요.`);
+    console.log(`\n🎉 모든 프로젝트 초기화가 완료되었습니다. IntelliJ에서 프로젝트를 열어주세요.`);
 } catch (error) {
     console.error('❌ 작업 중 오류 발생:', error);
 }
