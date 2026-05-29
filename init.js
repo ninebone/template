@@ -23,25 +23,34 @@ function replaceFileContent(fullPath) {
 
     let content = fs.readFileSync(fullPath, 'utf8');
 
-    // 1️⃣ [정정] .backend 제거! com.nine.template 주소를 com.testapp 주소와 1:1로 정확하게 매핑합니다.
-    // (depth를 3단계로 완벽하게 유지하여 스프링 컴포넌트 스캔 및 개발자님 API 명세와 일치시킵니다)
+    // 1️⃣ [정밀 타격] 우리 프로젝트 메인 패키지 뼈대 치환
     content = content.split('com.nine.template').join(`com.${packageNewName}`);
 
-    // 2️⃣ [핵심 방어선] 외부 고정 원격 라이브러리 주소를 임시 유니크 키값으로 숨겨버립니다.
-    const LIB_MARKER = '___NINE_MU_LIBRARY_PROTECTED_MARKER___';
-    content = content.split('com.nine-template-lab:nine-mu').join(LIB_MARKER);
+    // 2️⃣ [버전 가변형 방어선] 정규식을 사용해서 com.nine-template-lab:nine-mu:뒤에
+    // 어떤 버전 숫자가 오든(0.0.12 등) 통째로 추출해서 안전하게 보관합니다.
+    const libRegex = /com\.nine-template-lab:nine-mu:[\d\.]+/g;
+    const matchedLibs = content.match(libRegex);
+    const originalLibString = matchedLibs ? matchedLibs[0] : null;
 
-    // 3️⃣ [일반 치환] 나머지 프로젝트 고유 명칭들을 무차별 치환합니다.
+    const LIB_MARKER = '___NINE_MU_LIBRARY_PROTECTED_MARKER___';
+    if (originalLibString) {
+        // 실제 빌드 파일에 있는 주소를 마커로 대피시킴
+        content = content.split(originalLibString).join(LIB_MARKER);
+    }
+
+    // 3️⃣ [일반 치환] 프로젝트 이름 무차별 변환 (이때 마커는 안전하게 보호됨)
     content = content.split('com.nine').join(`com.${packageNewName}`);
     content = content.split('nine-template-backend').join(`${newName}-backend`);
     content = content.split('nine-template-frontend').join(`${newName}-frontend`);
     content = content.split('nine-template').join(newName);
     content = content.split(pascalOldName).join(pascalNewName);
 
-    // 4️⃣ [최종 복구] 보호해뒀던 외부 고정 라이브러리 주소를 원본 그대로 복구합니다.
-    content = content.split(LIB_MARKER).join('com.nine-template-lab:nine-mu');
+    // 4️⃣ [최종 복구] 보관해뒀던 진짜 버전이 포함된 원본 주소로 완벽 복구
+    if (originalLibString) {
+        content = content.split(LIB_MARKER).join(originalLibString);
+    }
 
-    // 5️⃣ [부가 조건] 인텔리제이 런 실행 구성 프로필 변환
+    // 5️⃣ 인텔리제이 런 실행 구성 프로필 변환
     if (fullPath.includes('runConfigurations')) {
         content = content.split('-Dspring.profiles.active=test').join('-Dspring.profiles.active=local');
     }
@@ -115,17 +124,19 @@ try {
     }
 
     const relocateJavaStructure = (rootType) => {
-        const oldJavaRoot = path.join(__dirname, `nine-template-backend/src/${rootType}/java/com/nine/template`);
-        if (!fs.existsSync(oldJavaRoot)) return;
+            const oldJavaRoot = path.join(__dirname, `nine-template-backend/src/${rootType}/java/com/nine/template`);
+            if (!fs.existsSync(oldJavaRoot)) return;
 
-        const newJavaRoot = path.join(__dirname, `nine-template-backend/src/${rootType}/java/com/${packageNewName}/backend`);
-        fs.mkdirSync(newJavaRoot, { recursive: true });
+            // 🎯 결정적 주범 해결: 맨 뒤에 붙어있던 /backend 를 완벽하게 삭제했습니다!
+            // 결과적으로 src/main/java/com/testapp 폴더가 생성됩니다.
+            const newJavaRoot = path.join(__dirname, `nine-template-backend/src/${rootType}/java/com/${packageNewName}`);
+            fs.mkdirSync(newJavaRoot, { recursive: true });
 
-        const items = fs.readdirSync(oldJavaRoot);
-        items.forEach(item => {
-            fs.renameSync(path.join(oldJavaRoot, item), path.join(newJavaRoot, item));
-        });
-    };
+            const items = fs.readdirSync(oldJavaRoot);
+            items.forEach(item => {
+                fs.renameSync(path.join(oldJavaRoot, item), path.join(newJavaRoot, item));
+            });
+        };
 
     relocateJavaStructure('main');
     relocateJavaStructure('test');
