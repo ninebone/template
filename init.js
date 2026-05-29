@@ -23,7 +23,6 @@ function replaceFileContent(fullPath) {
 
     let content = fs.readFileSync(fullPath, 'utf8');
 
-    // ✅ 제가 싸지른 억지 모듈 치환 4줄 싹 다 지우고, 처음 잘 되던 순정 규칙만 남겼습니다.
     content = content.split('com.nine.template').join(`com.${packageNewName}.backend`);
     content = content.split('nine-template-backend').join(`${newName}-backend`);
     content = content.split('nine-template-frontend').join(`${newName}-frontend`);
@@ -57,7 +56,8 @@ function globalTextLookup(dirPath) {
                 file.endsWith('.java') || file.endsWith('.yml') || file.endsWith('.xml') ||
                 file.endsWith('.json') || file.endsWith('.js') || file.endsWith('.ts') ||
                 file.endsWith('.tsx') || file.endsWith('.html') || file.endsWith('.gradle') ||
-                file.endsWith('.md') || file === '.env' || file.startsWith('.env.')
+                file.endsWith('.md') || file.endsWith('.iml') || // 👈 [수정 1] .iml 내부 텍스트 치환을 위해 확장자 대상 추가
+                file === '.env' || file.startsWith('.env.')
             ) {
                 replaceFileContent(fullPath);
             }
@@ -85,15 +85,7 @@ try {
         fs.writeFileSync(path.join(originalFePath, '.env.development'), 'VITE_API_BASE_URL=/api\n', 'utf8');
     }
 
-    // ❌ 뇌절해서 추가했던 .idea 관련 파일/폴더 강제 삭제 로직 싹 다 치웠습니다.
-    const oldBackendIml = path.join(__dirname, 'nine-template-backend/nine-template-backend.iml');
-    if (fs.existsSync(oldBackendIml)) {
-        fs.unlinkSync(oldBackendIml);
-    }
-    const oldFrontendIml = path.join(__dirname, 'nine-template-frontend.iml');
-    if (fs.existsSync(oldFrontendIml)) {
-        fs.unlinkSync(oldFrontendIml);
-    }
+    // [참고] 기존의 .iml 강제 삭제 로직은 완벽히 주석 처리하여 파일이 유지되도록 처리되었습니다.
 
     const oldMainJavaDir = path.join(__dirname, 'nine-template-backend/src/main/java/com/nine/template');
     const oldTestJavaDir = path.join(__dirname, 'nine-template-backend/src/test/java/com/nine/template');
@@ -142,7 +134,15 @@ try {
         }
     });
 
-    // 물리 폴더 다 바꾼 후 순정 규칙으로 텍스트 깔끔하게 치환
+    // 👈 [수정 2] 폴더명이 대단위로 바뀐 직후, 폴더 내부의 .iml 파일명도 정밀 물리 매핑
+    const oldImlPath = path.join(__dirname, `${newName}-backend/nine-template-backend.iml`);
+    const newImlPath = path.join(__dirname, `${newName}-backend/${newName}-backend.iml`);
+    if (fs.existsSync(oldImlPath)) {
+        fs.renameSync(oldImlPath, newImlPath);
+        console.log(`✨ 백엔드 모듈 파일명 매핑 완수: ${newName}-backend.iml`);
+    }
+
+    // 물리 폴더와 파일명이 다 바뀐 후 텍스트 깔끔하게 치환
     globalTextLookup(__dirname);
     console.log(`✅ 모든 대상 파일 내 텍스트 정밀 치환 완료`);
 
