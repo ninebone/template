@@ -23,21 +23,25 @@ function replaceFileContent(fullPath) {
 
     let content = fs.readFileSync(fullPath, 'utf8');
 
-    // 🎯 [치명적 핵심 추가] com.nine-template-lab 같은 외부 고정 라이브러리 주소는
-    // 나중에 치환되더라도 최종적으로 원본 주소를 유지하도록 임시 보관 처리하거나,
-    // 혹은 애초에 치환 대상에서 빗겨나가게 방어합니다.
+    // 1️⃣ [정정] .backend 제거! com.nine.template 주소를 com.testapp 주소와 1:1로 정확하게 매핑합니다.
+    // (depth를 3단계로 완벽하게 유지하여 스프링 컴포넌트 스캔 및 개발자님 API 명세와 일치시킵니다)
+    content = content.split('com.nine.template').join(`com.${packageNewName}`);
 
-    content = content.split('com.nine.template').join(`com.${packageNewName}.backend`);
+    // 2️⃣ [핵심 방어선] 외부 고정 원격 라이브러리 주소를 임시 유니크 키값으로 숨겨버립니다.
+    const LIB_MARKER = '___NINE_MU_LIBRARY_PROTECTED_MARKER___';
+    content = content.split('com.nine-template-lab:nine-mu').join(LIB_MARKER);
+
+    // 3️⃣ [일반 치환] 나머지 프로젝트 고유 명칭들을 무차별 치환합니다.
     content = content.split('com.nine').join(`com.${packageNewName}`);
     content = content.split('nine-template-backend').join(`${newName}-backend`);
     content = content.split('nine-template-frontend').join(`${newName}-frontend`);
-
-    // 만약 dependencies 내부가 test-app-lab으로 깨졌다면 원래 주소로 강제 롤백시킵니다.
-    content = content.split('com.testapp-lab:nine-mu').join('com.nine-template-lab:nine-mu'); // 👈 방어선 구축
-
     content = content.split('nine-template').join(newName);
     content = content.split(pascalOldName).join(pascalNewName);
 
+    // 4️⃣ [최종 복구] 보호해뒀던 외부 고정 라이브러리 주소를 원본 그대로 복구합니다.
+    content = content.split(LIB_MARKER).join('com.nine-template-lab:nine-mu');
+
+    // 5️⃣ [부가 조건] 인텔리제이 런 실행 구성 프로필 변환
     if (fullPath.includes('runConfigurations')) {
         content = content.split('-Dspring.profiles.active=test').join('-Dspring.profiles.active=local');
     }
