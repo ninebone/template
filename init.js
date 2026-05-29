@@ -23,10 +23,21 @@ function replaceFileContent(fullPath) {
 
     let content = fs.readFileSync(fullPath, 'utf8');
 
+    // 1. 가장 구체적인 전체 패키지 경로 먼저 치환
     content = content.split('com.nine.template').join(`com.${packageNewName}.backend`);
+
+    // 2. [추가] .iml 파일 등에 박혀있는 상위 모듈 그룹 com.nine 치환
+    content = content.split('com.nine').join(`com.${packageNewName}`);
+
+    // 3. 하이픈이 붙은 구체적인 서브모듈 명칭들 먼저 치환 (긴 단어 우선 규칙)
     content = content.split('nine-template-backend').join(`${newName}-backend`);
     content = content.split('nine-template-frontend').join(`${newName}-frontend`);
+
+    // 4. 마지막으로 하이픈이 없는 순수 'nine-template' 단어 치환
+    // (이렇게 해야 앞선 단어들이 test-app-test-app-backend로 찢어지는 비극을 막습니다)
     content = content.split('nine-template').join(newName);
+
+    // 5. 파스칼 케이스 치환
     content = content.split(pascalOldName).join(pascalNewName);
 
     if (fullPath.includes('runConfigurations')) {
