@@ -28,7 +28,11 @@ function replaceFileContent(fullPath) {
 
     let content = fs.readFileSync(fullPath, 'utf8');
 
-    // 기본 치환 규칙
+    // Backend.xml 내부의 모듈 연동 문자열이 단어별로 찢어지기 전에 통째로 정밀 치환
+    content = content.split('nine-template.nine-template-backend.main').join(`${newName}.${newName}-backend.main`);
+    content = content.split('nine-template.nine-template-frontend.main').join(`${newName}.${newName}-frontend.main`);
+
+    // 기본 순정 치환 규칙
     content = content.split('com.nine.template').join(`com.${packageNewName}.backend`);
     content = content.split('nine-template-backend').join(`${newName}-backend`);
     content = content.split('nine-template-frontend').join(`${newName}-frontend`);
@@ -56,9 +60,6 @@ function globalTextLookup(dirPath) {
         const fullPath = path.join(dirPath, file);
 
         if (fullPath === __filename) return;
-
-        // 유령 파일 생성 및 매핑 꼬임을 방지하기 위해 modules.xml은 텍스트 치환에서 완전히 제외
-        if (file === 'modules.xml') return;
 
         if (fs.statSync(fullPath).isDirectory()) {
             globalTextLookup(fullPath);
@@ -97,8 +98,7 @@ try {
         fs.writeFileSync(path.join(originalFePath, '.env.development'), 'VITE_API_BASE_URL=/api\n', 'utf8');
     }
 
-    // [순서 2] 원본에 잔존할 수 있는 옛날 IntelliJ 캐시 및 모듈 매핑용 파일 선제 파쇄
-    // 이 작업이 먼저 완료되어야 텍스트 치환 도중 꼬인 문자열 파일이 유실되거나 부활하지 않습니다.
+    // [순서 2] 🎯 복사 테스트 시 딸려오는 꼬임의 근원(modules.xml 및 옛날 .iml)을 치환 전에 선제 삭제
     const ideaModulesXml = path.join(__dirname, '.idea/modules.xml');
     if (fs.existsSync(ideaModulesXml)) {
         fs.unlinkSync(ideaModulesXml);
@@ -116,7 +116,7 @@ try {
         fs.unlinkSync(oldFrontendIml);
     }
 
-    // [순서 3] 정리 완료된 구조 상태에서 순수 소스코드 전역 텍스트 치환
+    // [순서 3] 안전 설계 정방향: 물리적 구조가 유지된 상태에서 전역 텍스트 정밀 치환 완수
     globalTextLookup(__dirname);
     console.log(`✅ 모든 대상 파일 내 텍스트 정밀 치환 완료`);
 
@@ -157,7 +157,7 @@ try {
     removeEmptyDirs(path.join(__dirname, 'nine-template-backend/src/main/java/com/nine'));
     removeEmptyDirs(path.join(__dirname, 'nine-template-backend/src/test/java/com/nine'));
 
-    // [순서 6] 백엔드/프론트엔드 대형 프로젝트 대단위 폴더명 최종 물리 변경
+    // [순서 6] 대형 프로젝트 대단위 폴더명 최종 물리 변경
     const dirTargets = [
         { from: 'nine-template-backend', to: `${newName}-backend` },
         { from: 'nine-template-frontend', to: `${newName}-frontend` }
