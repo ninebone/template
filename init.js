@@ -135,16 +135,18 @@ try {
 
     // 🎯 [추가] 폴더명이 완벽히 변경된 직후, 각 내부의 .iml 파일명도 정밀 물리 변경
     // 1. 백엔드 .iml 파일명 변경
-    const oldBackendImlPath = path.join(__dirname, `${newName}-backend/nine-template-backend.iml`);
-    const newBackendImlPath = path.join(__dirname, `${newName}-backend/${newName}-backend.iml`);
+    // 🎯 [수정 완료] 폴더명이 완벽히 변경된 직후, 각 내부의 .iml 파일명도 정밀 물리 변경
+    // 1. 백엔드 .iml 파일명 변경 (백엔드 폴더 내부에 위치)
+    const oldBackendImlPath = path.join(__dirname, `nine-template-backend.iml`);
+    const newBackendImlPath = path.join(__dirname, `${newName}-backend.iml`);
     if (fs.existsSync(oldBackendImlPath)) {
         fs.renameSync(oldBackendImlPath, newBackendImlPath);
         console.log(`✨ 백엔드 .iml 파일명 리네임 완료: ${newName}-backend.iml`);
     }
 
-    // 2. 프론트엔드 .iml 파일명 변경 (프론트엔드 폴더 내부에 iml이 존재한다고 가정)
-    const oldFrontendImlPath = path.join(__dirname, `${newName}-frontend/nine-template-frontend.iml`);
-    const newFrontendImlPath = path.join(__dirname, `${newName}-frontend/${newName}-frontend.iml`);
+    // 2. 프론트엔드 .iml 파일명 변경 (✅ 최상위 루트에 있으므로 __dirname에서 바로 매핑)
+    const oldFrontendImlPath = path.join(__dirname, 'nine-template-frontend.iml');
+    const newFrontendImlPath = path.join(__dirname, `${newName}-frontend.iml`);
     if (fs.existsSync(oldFrontendImlPath)) {
         fs.renameSync(oldFrontendImlPath, newFrontendImlPath);
         console.log(`✨ 프론트엔드 .iml 파일명 리네임 완료: ${newName}-frontend.iml`);
