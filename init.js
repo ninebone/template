@@ -28,20 +28,25 @@ function replaceFileContent(fullPath) {
 
     let content = fs.readFileSync(fullPath, 'utf8');
 
-    // Backend.xml 내부의 모듈 연동 문자열이 단어별로 찢어지기 전에 통째로 정밀 치환
+    // 1. 가장 길고 복잡한 인텔리제이 모듈 연동용 고유 문자열 우선 치환 (범위가 큰 것부터)
     content = content.split('nine-template.nine-template-backend.main').join(`${newName}.${newName}-backend.main`);
     content = content.split('nine-template.nine-template-frontend.main').join(`${newName}.${newName}-frontend.main`);
+    content = content.split('nine-template-backend.main').join(`${newName}-backend.main`);
+    content = content.split('nine-template.main').join(`${newName}.main`);
 
-    // 기본 순정 치환 규칙
+    // 2. 패키지 및 서브폴더 명칭 정밀 치환
     content = content.split('com.nine.template').join(`com.${packageNewName}.backend`);
     content = content.split('nine-template-backend').join(`${newName}-backend`);
     content = content.split('nine-template-frontend').join(`${newName}-frontend`);
+
+    // 3. 가장 광범위한 기본 단어 치환을 '맨 마지막'에 배치 (앞에서 쪼개지는 것 방지)
     content = content.split('nine-template').join(newName);
     content = content.split(pascalOldName).join(pascalNewName);
 
     // IntelliJ 실행 구성 프로필 자동 치환 (test -> local)
     if (fullPath.includes('runConfigurations')) {
         content = content.split('-Dspring.profiles.active=test').join('-Dspring.profiles.active=local');
+        content = content.split('nine-template').join(newName);
     }
 
     fs.writeFileSync(fullPath, content, 'utf8');
@@ -99,10 +104,10 @@ try {
     }
 
     // [순서 2] 🎯 복사 테스트 시 딸려오는 꼬임의 근원(modules.xml 및 옛날 .iml)을 치환 전에 선제 삭제
-    const ideaModulesXml = path.join(__dirname, '.idea/modules.xml');
-    if (fs.existsSync(ideaModulesXml)) {
-        fs.unlinkSync(ideaModulesXml);
-    }
+    //const ideaModulesXml = path.join(__dirname, '.idea/modules.xml');
+    //if (fs.existsSync(ideaModulesXml)) {
+    //    fs.unlinkSync(ideaModulesXml);
+    //}
     const ideaModulesDir = path.join(__dirname, '.idea/modules');
     if (fs.existsSync(ideaModulesDir)) {
         fs.rmSync(ideaModulesDir, { recursive: true, force: true });
@@ -116,9 +121,7 @@ try {
         fs.unlinkSync(oldFrontendIml);
     }
 
-    // [순서 3] 안전 설계 정방향: 물리적 구조가 유지된 상태에서 전역 텍스트 정밀 치환 완수
-    globalTextLookup(__dirname);
-    console.log(`✅ 모든 대상 파일 내 텍스트 정밀 치환 완료`);
+
 
     // [순서 4] 자바 메인/테스트 파일명 먼저 안전하게 물리 리네임
     const oldMainJavaDir = path.join(__dirname, 'nine-template-backend/src/main/java/com/nine/template');
@@ -170,7 +173,11 @@ try {
         }
     });
 
-    // [순서 7] 초기화 완료 후 스크립트 자가 삭제
+    // [순서 7] 안전 설계 정방향: 물리적 구조가 유지된 상태에서 전역 텍스트 정밀 치환 완수
+        globalTextLookup(__dirname);
+        console.log(`✅ 모든 대상 파일 내 텍스트 정밀 치환 완료`);
+
+    // [순서 8] 초기화 완료 후 스크립트 자가 삭제
     console.log('\n🔥 초기화 스크립트(init.js)를 자가 삭제합니다.');
     fs.unlinkSync(__filename);
 
