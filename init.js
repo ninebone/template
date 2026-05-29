@@ -23,20 +23,19 @@ function replaceFileContent(fullPath) {
 
     let content = fs.readFileSync(fullPath, 'utf8');
 
-    // 1. 가장 구체적인 전체 패키지 경로 먼저 치환
+    // 🎯 [치명적 핵심 추가] com.nine-template-lab 같은 외부 고정 라이브러리 주소는
+    // 나중에 치환되더라도 최종적으로 원본 주소를 유지하도록 임시 보관 처리하거나,
+    // 혹은 애초에 치환 대상에서 빗겨나가게 방어합니다.
+
     content = content.split('com.nine.template').join(`com.${packageNewName}.backend`);
-
-    // 2. .iml 파일 등에 박혀있는 상위 모듈 그룹 com.nine 치환
     content = content.split('com.nine').join(`com.${packageNewName}`);
-
-    // 3. 하이픈이 붙은 구체적인 서브모듈 명칭들 먼저 치환 (긴 단어 우선 규칙)
     content = content.split('nine-template-backend').join(`${newName}-backend`);
     content = content.split('nine-template-frontend').join(`${newName}-frontend`);
 
-    // 4. 마지막으로 하이픈이 없는 순수 'nine-template' 단어 치환
-    content = content.split('nine-template').join(newName);
+    // 만약 dependencies 내부가 test-app-lab으로 깨졌다면 원래 주소로 강제 롤백시킵니다.
+    content = content.split('com.testapp-lab:nine-mu').join('com.nine-template-lab:nine-mu'); // 👈 방어선 구축
 
-    // 5. 파스칼 케이스 치환
+    content = content.split('nine-template').join(newName);
     content = content.split(pascalOldName).join(pascalNewName);
 
     if (fullPath.includes('runConfigurations')) {

@@ -7,6 +7,7 @@
 # 2. 실행 구성을 담은 핵심 폴더와 설정은 제외하지 않도록 길을 열어줍니다.
 !.idea/runConfigurations/
 !.idea/services.xml
+!.idea/gradle.xml
 
 # ❌ 개발자 개인 로컬 잔재들은 확실하게 차단 (보안 및 충돌 방지)
 .idea/workspace.xml
