@@ -26,7 +26,7 @@ function replaceFileContent(fullPath) {
     // 1. 가장 구체적인 전체 패키지 경로 먼저 치환
     content = content.split('com.nine.template').join(`com.${packageNewName}.backend`);
 
-    // 2. [추가] .iml 파일 등에 박혀있는 상위 모듈 그룹 com.nine 치환
+    // 2. .iml 파일 등에 박혀있는 상위 모듈 그룹 com.nine 치환
     content = content.split('com.nine').join(`com.${packageNewName}`);
 
     // 3. 하이픈이 붙은 구체적인 서브모듈 명칭들 먼저 치환 (긴 단어 우선 규칙)
@@ -34,7 +34,6 @@ function replaceFileContent(fullPath) {
     content = content.split('nine-template-frontend').join(`${newName}-frontend`);
 
     // 4. 마지막으로 하이픈이 없는 순수 'nine-template' 단어 치환
-    // (이렇게 해야 앞선 단어들이 test-app-test-app-backend로 찢어지는 비극을 막습니다)
     content = content.split('nine-template').join(newName);
 
     // 5. 파스칼 케이스 치환
@@ -67,7 +66,7 @@ function globalTextLookup(dirPath) {
                 file.endsWith('.java') || file.endsWith('.yml') || file.endsWith('.xml') ||
                 file.endsWith('.json') || file.endsWith('.js') || file.endsWith('.ts') ||
                 file.endsWith('.tsx') || file.endsWith('.html') || file.endsWith('.gradle') ||
-                file.endsWith('.md') || file.endsWith('.iml') || // 👈 [변경] .iml 내부 텍스트 치환 허용
+                file.endsWith('.md') || file.endsWith('.iml') || // .iml 내부 텍스트 치환 허용
                 file === '.env' || file.startsWith('.env.')
             ) {
                 replaceFileContent(fullPath);
@@ -131,7 +130,22 @@ try {
     removeEmptyDirs(path.join(__dirname, 'nine-template-backend/src/main/java/com/nine'));
     removeEmptyDirs(path.join(__dirname, 'nine-template-backend/src/test/java/com/nine'));
 
-    // [순서 6] 대형 프로젝트 대단위 폴더명 최종 물리 변경
+    // 🎯 [물리 변경 순서 보장] 최상위 루트에 있는 .iml 파일명들을 먼저 안전하게 리네임합니다.
+    const oldBackendImlPath = path.join(__dirname, `nine-template-backend.iml`);
+    const newBackendImlPath = path.join(__dirname, `${newName}-backend.iml`);
+    if (fs.existsSync(oldBackendImlPath)) {
+        fs.renameSync(oldBackendImlPath, newBackendImlPath);
+        console.log(`✨ 백엔드 .iml 파일명 리네임 완료: ${newName}-backend.iml`);
+    }
+
+    const oldFrontendImlPath = path.join(__dirname, 'nine-template-frontend.iml');
+    const newFrontendImlPath = path.join(__dirname, `${newName}-frontend.iml`);
+    if (fs.existsSync(oldFrontendImlPath)) {
+        fs.renameSync(oldFrontendImlPath, newFrontendImlPath);
+        console.log(`✨ 프론트엔드 .iml 파일명 리네임 완료: ${newName}-frontend.iml`);
+    }
+
+    // 대형 프로젝트 대단위 폴더명 최종 물리 변경
     const dirTargets = [
         { from: 'nine-template-backend', to: `${newName}-backend` },
         { from: 'nine-template-frontend', to: `${newName}-frontend` }
@@ -144,30 +158,11 @@ try {
         }
     });
 
-    // 🎯 [추가] 폴더명이 완벽히 변경된 직후, 각 내부의 .iml 파일명도 정밀 물리 변경
-    // 1. 백엔드 .iml 파일명 변경
-    // 🎯 [수정 완료] 폴더명이 완벽히 변경된 직후, 각 내부의 .iml 파일명도 정밀 물리 변경
-    // 1. 백엔드 .iml 파일명 변경 (백엔드 폴더 내부에 위치)
-    const oldBackendImlPath = path.join(__dirname, `nine-template-backend.iml`);
-    const newBackendImlPath = path.join(__dirname, `${newName}-backend.iml`);
-    if (fs.existsSync(oldBackendImlPath)) {
-        fs.renameSync(oldBackendImlPath, newBackendImlPath);
-        console.log(`✨ 백엔드 .iml 파일명 리네임 완료: ${newName}-backend.iml`);
-    }
-
-    // 2. 프론트엔드 .iml 파일명 변경 (✅ 최상위 루트에 있으므로 __dirname에서 바로 매핑)
-    const oldFrontendImlPath = path.join(__dirname, 'nine-template-frontend.iml');
-    const newFrontendImlPath = path.join(__dirname, `${newName}-frontend.iml`);
-    if (fs.existsSync(oldFrontendImlPath)) {
-        fs.renameSync(oldFrontendImlPath, newFrontendImlPath);
-        console.log(`✨ 프론트엔드 .iml 파일명 리네임 완료: ${newName}-frontend.iml`);
-    }
-
-    // [순서 7] 파일명까지 다 바뀐 상태에서 안전하게 전역 텍스트 정밀 치환 완수
+    // 모든 물리 구조 변경(폴더명, 파일명, 패키지 이동)이 끝난 상태에서 전역 텍스트 정밀 치환 완수
     globalTextLookup(__dirname);
     console.log(`✅ 모든 대상 파일 내 텍스트 정밀 치환 완료`);
 
-    // [순서 8] 초기화 완료 후 스크립트 자가 삭제
+    // 초기화 완료 후 스크립트 자가 삭제
     fs.unlinkSync(__filename);
     console.log(`\n🎉 모든 프로젝트 초기화가 완료되었습니다. IntelliJ에서 프로젝트를 열어주세요.`);
 } catch (error) {
