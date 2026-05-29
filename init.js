@@ -56,7 +56,7 @@ function globalTextLookup(dirPath) {
                 file.endsWith('.java') || file.endsWith('.yml') || file.endsWith('.xml') ||
                 file.endsWith('.json') || file.endsWith('.js') || file.endsWith('.ts') ||
                 file.endsWith('.tsx') || file.endsWith('.html') || file.endsWith('.gradle') ||
-                file.endsWith('.md') || file.endsWith('.iml') || // 👈 [수정 1] .iml 내부 텍스트 치환을 위해 확장자 대상 추가
+                file.endsWith('.md') || file.endsWith('.iml') || // 👈 [변경] .iml 내부 텍스트 치환 허용
                 file === '.env' || file.startsWith('.env.')
             ) {
                 replaceFileContent(fullPath);
@@ -84,8 +84,6 @@ try {
         fs.writeFileSync(path.join(originalFePath, '.env'), 'VITE_API_BASE_URL=\n', 'utf8');
         fs.writeFileSync(path.join(originalFePath, '.env.development'), 'VITE_API_BASE_URL=/api\n', 'utf8');
     }
-
-    // [참고] 기존의 .iml 강제 삭제 로직은 완벽히 주석 처리하여 파일이 유지되도록 처리되었습니다.
 
     const oldMainJavaDir = path.join(__dirname, 'nine-template-backend/src/main/java/com/nine/template');
     const oldTestJavaDir = path.join(__dirname, 'nine-template-backend/src/test/java/com/nine/template');
@@ -122,6 +120,7 @@ try {
     removeEmptyDirs(path.join(__dirname, 'nine-template-backend/src/main/java/com/nine'));
     removeEmptyDirs(path.join(__dirname, 'nine-template-backend/src/test/java/com/nine'));
 
+    // [순서 6] 대형 프로젝트 대단위 폴더명 최종 물리 변경
     const dirTargets = [
         { from: 'nine-template-backend', to: `${newName}-backend` },
         { from: 'nine-template-frontend', to: `${newName}-frontend` }
@@ -134,18 +133,28 @@ try {
         }
     });
 
-    // 👈 [수정 2] 폴더명이 대단위로 바뀐 직후, 폴더 내부의 .iml 파일명도 정밀 물리 매핑
-    const oldImlPath = path.join(__dirname, `${newName}-backend/nine-template-backend.iml`);
-    const newImlPath = path.join(__dirname, `${newName}-backend/${newName}-backend.iml`);
-    if (fs.existsSync(oldImlPath)) {
-        fs.renameSync(oldImlPath, newImlPath);
-        console.log(`✨ 백엔드 모듈 파일명 매핑 완수: ${newName}-backend.iml`);
+    // 🎯 [추가] 폴더명이 완벽히 변경된 직후, 각 내부의 .iml 파일명도 정밀 물리 변경
+    // 1. 백엔드 .iml 파일명 변경
+    const oldBackendImlPath = path.join(__dirname, `${newName}-backend/nine-template-backend.iml`);
+    const newBackendImlPath = path.join(__dirname, `${newName}-backend/${newName}-backend.iml`);
+    if (fs.existsSync(oldBackendImlPath)) {
+        fs.renameSync(oldBackendImlPath, newBackendImlPath);
+        console.log(`✨ 백엔드 .iml 파일명 리네임 완료: ${newName}-backend.iml`);
     }
 
-    // 물리 폴더와 파일명이 다 바뀐 후 텍스트 깔끔하게 치환
+    // 2. 프론트엔드 .iml 파일명 변경 (프론트엔드 폴더 내부에 iml이 존재한다고 가정)
+    const oldFrontendImlPath = path.join(__dirname, `${newName}-frontend/nine-template-frontend.iml`);
+    const newFrontendImlPath = path.join(__dirname, `${newName}-frontend/${newName}-frontend.iml`);
+    if (fs.existsSync(oldFrontendImlPath)) {
+        fs.renameSync(oldFrontendImlPath, newFrontendImlPath);
+        console.log(`✨ 프론트엔드 .iml 파일명 리네임 완료: ${newName}-frontend.iml`);
+    }
+
+    // [순서 7] 파일명까지 다 바뀐 상태에서 안전하게 전역 텍스트 정밀 치환 완수
     globalTextLookup(__dirname);
     console.log(`✅ 모든 대상 파일 내 텍스트 정밀 치환 완료`);
 
+    // [순서 8] 초기화 완료 후 스크립트 자가 삭제
     fs.unlinkSync(__filename);
     console.log(`\n🎉 모든 프로젝트 초기화가 완료되었습니다. IntelliJ에서 프로젝트를 열어주세요.`);
 } catch (error) {
