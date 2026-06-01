@@ -5,48 +5,60 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const newName = path.basename(__dirname);
+const newName = path.basename(__dirname); // 예: test-ap
 const oldName = 'nine-template';
 const pascalOldName = 'NineTemplate';
 
+// PascalCase 변환 (test-ap -> TestAp)
 const pascalNewName = newName
     .split('-')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join('');
 
+// 패키지 명칭 규칙 (test-ap -> testap)
 const packageNewName = newName.split('-').join('').toLowerCase();
 
-console.log(`🚀 [${newName}] 기반 정밀 리팩토링 초기화를 시작합니다...`);
+console.log(`🚀 [${newName}] 기반 '안전 최우선' 정밀 리팩토링 초기화를 시작합니다...`);
 
 function replaceFileContent(fullPath) {
     if (!fs.existsSync(fullPath)) return;
 
     let content = fs.readFileSync(fullPath, 'utf8');
 
+    // -------------------------------------------------------------------------
+    // 🛡️ [보호 마커 설정 구역] - 무차별 치환으로부터 진짜 자산들을 보호합니다.
+    // -------------------------------------------------------------------------
+    const PROTECT_LAB_MARKER = '___NINE_LAB_PROTECTED___';
+    const PROTECT_AI_MARKER = '___NINE_AI_PROTECTED___';
+
+    // 1. build.gradle 내부의 implementation("com.nine-lab:nine-mu:0.0.13") 보호
+    content = content.replace(/com\.nine-lab/g, PROTECT_LAB_MARKER);
+
+    // 2. 자바 메인 클래스의 "com.ninelab.ai" 컴포넌트 스캔 경로 보호
+    content = content.replace(/com\.ninelab\.ai/g, PROTECT_AI_MARKER);
+
+    // -------------------------------------------------------------------------
+    // 🔄 [안전 치환 구역] - 오직 해당 템플릿 고유 경로만 정밀 타격합니다.
+    // -------------------------------------------------------------------------
+    // 정확한 패키지 핑포인팅 치환 먼저 수행
     content = content.split('com.nine.template').join(`com.${packageNewName}`);
-
-    const libRegex = /com\.nine-template-lab:nine-mu:[\d\.]+/g;
-    const matchedLibs = content.match(libRegex);
-    const originalLibString = matchedLibs ? matchedLibs[0] : null;
-
-    const LIB_MARKER = '___NINE_MU_LIBRARY_PROTECTED_MARKER___';
-    if (originalLibString) {
-        content = content.split(originalLibString).join(LIB_MARKER);
-    }
-
     content = content.split('com.nine').join(`com.${packageNewName}`);
+
+    // 구조 및 폴더 명칭 싱크
     content = content.split('nine-template-backend').join(`${newName}-backend`);
     content = content.split('nine-template-frontend').join(`${newName}-frontend`);
     content = content.split('nine-template').join(newName);
     content = content.split(pascalOldName).join(pascalNewName);
 
-    if (originalLibString) {
-        content = content.split(LIB_MARKER).join(originalLibString);
-    }
-
     if (fullPath.includes('runConfigurations')) {
         content = content.split('-Dspring.profiles.active=test').join('-Dspring.profiles.active=local');
     }
+
+    // -------------------------------------------------------------------------
+    // 🔓 [보호 복원 구역] - 숨겨놓았던 진짜 소중한 이름들을 원상태로 되돌립니다.
+    // -------------------------------------------------------------------------
+    content = content.split(PROTECT_LAB_MARKER).join('com.nine-lab');
+    content = content.split(PROTECT_AI_MARKER).join('com.ninelab.ai');
 
     fs.writeFileSync(fullPath, content, 'utf8');
 }
@@ -71,8 +83,7 @@ function globalTextLookup(dirPath) {
                 file.endsWith('.java') || file.endsWith('.yml') || file.endsWith('.xml') ||
                 file.endsWith('.json') || file.endsWith('.js') || file.endsWith('.ts') ||
                 file.endsWith('.tsx') || file.endsWith('.html') || file.endsWith('.gradle') ||
-                file.endsWith('.md') || file.endsWith('.iml') || // .iml 내부 텍스트 치환 허용
-                file === '.env' || file.startsWith('.env.')
+                file.endsWith('.md') || file === '.env' || file.startsWith('.env.')
             ) {
                 replaceFileContent(fullPath);
             }
@@ -100,6 +111,7 @@ try {
         fs.writeFileSync(path.join(originalFePath, '.env.development'), 'VITE_API_BASE_URL=/api\n', 'utf8');
     }
 
+    // 파일명 물리 리네임 단계
     const oldMainJavaDir = path.join(__dirname, 'nine-template-backend/src/main/java/com/nine/template');
     const oldTestJavaDir = path.join(__dirname, 'nine-template-backend/src/test/java/com/nine/template');
 
@@ -117,40 +129,23 @@ try {
     }
 
     const relocateJavaStructure = (rootType) => {
-            const oldJavaRoot = path.join(__dirname, `nine-template-backend/src/${rootType}/java/com/nine/template`);
-            if (!fs.existsSync(oldJavaRoot)) return;
+        const oldJavaRoot = path.join(__dirname, `nine-template-backend/src/${rootType}/java/com/nine/template`);
+        if (!fs.existsSync(oldJavaRoot)) return;
 
-            // 🎯 결정적 주범 해결: 맨 뒤에 붙어있던 /backend 를 완벽하게 삭제했습니다!
-            // 결과적으로 src/main/java/com/testapp 폴더가 생성됩니다.
-            const newJavaRoot = path.join(__dirname, `nine-template-backend/src/${rootType}/java/com/${packageNewName}`);
-            fs.mkdirSync(newJavaRoot, { recursive: true });
+        const newJavaRoot = path.join(__dirname, `nine-template-backend/src/${rootType}/java/com/${packageNewName}`);
+        fs.mkdirSync(newJavaRoot, { recursive: true });
 
-            const items = fs.readdirSync(oldJavaRoot);
-            items.forEach(item => {
-                fs.renameSync(path.join(oldJavaRoot, item), path.join(newJavaRoot, item));
-            });
-        };
+        const items = fs.readdirSync(oldJavaRoot);
+        items.forEach(item => {
+            fs.renameSync(path.join(oldJavaRoot, item), path.join(newJavaRoot, item));
+        });
+    };
 
     relocateJavaStructure('main');
     relocateJavaStructure('test');
 
     removeEmptyDirs(path.join(__dirname, 'nine-template-backend/src/main/java/com/nine'));
     removeEmptyDirs(path.join(__dirname, 'nine-template-backend/src/test/java/com/nine'));
-
-    // 🎯 [물리 변경 순서 보장] 최상위 루트에 있는 .iml 파일명들을 먼저 안전하게 리네임합니다.
-    const oldBackendImlPath = path.join(__dirname, `nine-template-backend.iml`);
-    const newBackendImlPath = path.join(__dirname, `${newName}-backend.iml`);
-    if (fs.existsSync(oldBackendImlPath)) {
-        fs.renameSync(oldBackendImlPath, newBackendImlPath);
-        console.log(`✨ 백엔드 .iml 파일명 리네임 완료: ${newName}-backend.iml`);
-    }
-
-    const oldFrontendImlPath = path.join(__dirname, 'nine-template-frontend.iml');
-    const newFrontendImlPath = path.join(__dirname, `${newName}-frontend.iml`);
-    if (fs.existsSync(oldFrontendImlPath)) {
-        fs.renameSync(oldFrontendImlPath, newFrontendImlPath);
-        console.log(`✨ 프론트엔드 .iml 파일명 리네임 완료: ${newName}-frontend.iml`);
-    }
 
     // 대형 프로젝트 대단위 폴더명 최종 물리 변경
     const dirTargets = [
@@ -165,6 +160,7 @@ try {
         }
     });
 
+    // 텍스트 글로벌 치환 기동
     globalTextLookup(__dirname);
     console.log(`모든 대상 파일 내 텍스트 정밀 치환 완료`);
 

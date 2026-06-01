@@ -53,8 +53,7 @@ export const AuthGuard = () => {
     if (!token) {
         return <LoginPage onLoginSuccess={handleLoginSuccess} />;
     }
-console.log("---------")
-console.log(projectViews);
+
     return (
         <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
             <TopMenu />
