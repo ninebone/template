@@ -1,0 +1,210 @@
+:host(nx-title) {
+
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	height: 0;
+
+	.wrapper {
+		display: flex;
+
+		.title-wrapper {
+			background: darkcyan;
+			--opacity: 0.3;
+			height: 24px;
+			display: flex;
+			align-items: center;
+			--font-weight: 700;
+			padding: 0 32px 4px;
+			--background-color: #666;
+			border-top: none;
+			border-bottom-right-radius: 8px;
+			border-bottom-left-radius: 8px;
+			--box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+			--gap: 4px;
+			.title-icon {
+				display: none;
+				--width: 16px;
+				height: 16px;
+				background-repeat: no-repeat;
+				background-position: center;
+				background-size: auto;
+				background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(200,200,200)" class="bi bi-grid" viewBox="0 0 16 16"><path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5z"/></svg>');
+			}
+			span {
+				padding-left: 8px;
+				padding-right: 8px;
+				color: white;
+				font-weight: 700;
+				font-size: 14px;
+			}
+
+			.bar1, .bar8 {
+				display: none;
+				width: 4px;
+				height: 4px;
+				border-radius: 50%;
+				background: green;
+			}
+			.bar2, .bar7 {
+				display: none;
+				width: 32px;
+				height: 1px;
+				background: green;
+			}
+		}
+	}
+
+	/* Breadcrumb CSS */
+	.breadcrumb-container {
+		position: absolute;
+		right: 4px;
+		margin-top: 2px;
+		padding: 0px 4px;
+		font-size: 10px;
+		color: #777;
+		display: flex; /* 가로 정렬 */
+		align-items: center;
+		justify-content: flex-end; /* 오른쪽 정렬 */
+		--border-left: 2px solid #666;
+		border-right: 2px solid #666;
+	}
+	.breadcrumb-item {
+		white-space: nowrap; /* 줄바꿈 방지 */
+	}
+	.breadcrumb-separator {
+		margin: 0 5px;
+		color: #bbb;
+	}
+	.breadcrumb-current {
+		--font-weight: bold;
+		color: #333;
+	}
+
+	/* Title CSS (아이콘 및 텍스트 스타일) */
+	.title-wrapper {
+		display: flex;
+		align-items: center;
+		padding-bottom: 2px;
+		--border-bottom: 2px solid #eee;
+		--margin-bottom: 15px;
+	}
+	.title-icon {
+		margin-right: 10px;
+		font-size: 20px;
+		color: #333;
+		/* Font Awesome 등 외부 아이콘 라이브러리를 사용하는 경우 */
+		/* font-family: 'Font Awesome 5 Free'; */
+		/* font-weight: 900; */
+		/* content: '054'; */
+	}
+	.title-text {
+		font-size: 18px;
+		font-weight: bold;
+		color: #333;
+	}
+
+	a {
+		color: #007bff; /* 파란색 계열로 링크임을 강조 */
+		text-decoration: none; /* 기본 밑줄 제거 */
+		transition: color 0.3s, background-color 0.3s; /* 호버 효과를 부드럽게 */
+	}
+	/* 마우스 오버 시 */
+	a:hover {
+		color: #0056b3; /* 기본색보다 어둡게 변경 */
+		text-decoration: underline; /* 밑줄을 다시 추가하여 클릭 유도 */
+	}
+
+	/* 클릭 중일 때 */
+	a:active {
+		color: #004085; /* 더 어둡게 변경 */
+	}
+
+	/* 방문한 링크 */
+	a:visited {
+		color: #007bff; /* 방문한 링크는 다른 색으로 변경 */
+	}
+}
+
+
+:host(nx-title.sub) {
+
+	.wrapper {
+		display: flex; /* 아이콘과 텍스트를 한 줄에 정렬 */
+		justify-content: space-between;
+		align-items: flex-end;
+		--padding: 10px 15px; /* 내부 여백 */
+		border-bottom: 2px solid #eee; /* 아래쪽 구분선 */
+		margin-bottom: 15px; /* 아래쪽 여백 */
+	}
+
+
+	/* Breadcrumb CSS */
+	.breadcrumb-container {
+		padding: 0 4px 0 0;
+		--background-color: #f5f5f5;
+		--border-bottom: 1px solid #eee;
+		font-size: 10px;
+		color: #777;
+		display: flex; /* 가로 정렬 */
+		align-items: center;
+		justify-content: flex-end; /* 오른쪽 정렬 */
+		--margin-bottom: 15px; /* 제목과의 간격 */
+	}
+	.breadcrumb-item {
+		white-space: nowrap; /* 줄바꿈 방지 */
+	}
+	.breadcrumb-separator {
+		margin: 0 5px;
+		color: #bbb;
+	}
+	.breadcrumb-current {
+		--font-weight: bold;
+		color: #333;
+	}
+
+	/* Title CSS (아이콘 및 텍스트 스타일) */
+	.title-wrapper {
+		display: flex;
+		align-items: center;
+		padding-bottom: 2px;
+		--border-bottom: 2px solid #eee;
+		--margin-bottom: 15px;
+	}
+	.title-icon {
+		margin-right: 10px;
+		font-size: 20px;
+		color: #333;
+		/* Font Awesome 등 외부 아이콘 라이브러리를 사용하는 경우 */
+		/* font-family: 'Font Awesome 5 Free'; */
+		/* font-weight: 900; */
+		/* content: '054'; */
+	}
+	.title-text {
+		font-size: 18px;
+		font-weight: bold;
+		color: #333;
+	}
+
+	a {
+		color: #007bff; /* 파란색 계열로 링크임을 강조 */
+		text-decoration: none; /* 기본 밑줄 제거 */
+		transition: color 0.3s, background-color 0.3s; /* 호버 효과를 부드럽게 */
+	}
+	/* 마우스 오버 시 */
+	a:hover {
+		color: #0056b3; /* 기본색보다 어둡게 변경 */
+		text-decoration: underline; /* 밑줄을 다시 추가하여 클릭 유도 */
+	}
+
+	/* 클릭 중일 때 */
+	a:active {
+		color: #004085; /* 더 어둡게 변경 */
+	}
+
+	/* 방문한 링크 */
+	a:visited {
+		color: #007bff; /* 방문한 링크는 다른 색으로 변경 */
+	}
+}
+

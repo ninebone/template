@@ -1,0 +1,124 @@
+:host(ide-diff) {
+	width: 100%;
+	height: 100%;
+
+	.wrapper {
+		display: flex;
+		position: relative;
+		--gap: 8px;
+		--font-family: monospace;
+		height: 100%;
+	}
+	.panel {
+		width: 50%;
+		border: 1px solid #ccc;
+		--padding: 8px;
+		overflow: auto;
+		white-space: pre-wrap;
+		text-align: left;
+		display: flex;
+		justify-content: flex-start; /* 좌측 정렬 */
+		align-items: flex-start;     /* 상단 정렬 */
+		flex-direction: column;
+		box-sizing: border-box;
+	}
+	.panel pre {
+		margin: 0;
+		--padding: 8px;
+		text-align: left;
+		white-space: pre-wrap;
+		word-break: break-word;
+	}
+
+	.cm-editor {
+		height: 100%;
+		width: 100%;
+		--padding-left: 80px;
+	}
+	.cm-content { /* CodeMirror 텍스트 내용을 감싸는 내부 div */
+	}
+	/* 각 라인에 버튼 공간 확보 */
+
+	/* ideDiff.css */
+
+	/* 기본적인 CodeMirror 라인 포지셔닝 */
+	.cm-line {
+		position: relative;
+		--display: flex;
+		padding-left: 18px;
+	}
+
+	/* 병합 버튼 컨테이너 */
+	.cm-merge-button-container {
+		position: absolute;
+		height: 16px;
+		width: 16px; /* 버튼 너비 고정으로 겹침 방지 */
+		left: 2px; /* 라인 번호 영역 바로 옆에 배치. 필요에 따라 조절하세요. */
+		top: 50%;
+		transform: translateY(-50%);
+		--z-index: 1; /* 다른 요소 위에 표시되도록 Z-index를 높게 설정 */
+		display: flex;
+		--gap: 5px;
+		justify-content: center; /* 버튼 중앙 정렬 */
+	}
+
+	/* 병합 버튼 기본 스타일 */
+	.cm-merge-button {
+		--margin: 2px 0;
+		width: 100%;
+		border: none;
+		border-radius: 3px;
+		cursor: pointer;
+		opacity: 0.7; /* 기본적으로 약간 투명하게 */
+		transition: opacity 0.2s ease-in-out; /* 호버 시 부드러운 전환 */
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: auto;
+	}
+
+	/* 호버 시 버튼 불투명도 증가 */
+	.cm-merge-button:hover {
+		opacity: 1;
+		background-color: #e0e0e0;
+	}
+
+	/* AI 추천을 현재 소스에 '적용'하는 버튼 (오른쪽 TOBE 에디터에 붙음) */
+	.cm-merge-button.accept {
+		background-color: #4CAF50; /* 녹색 */
+		background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-arrow-left-short" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5"/></svg>');
+	}
+
+	/* AI의 삭제를 현재 소스 기준으로 '되돌리는' 버튼 (왼쪽 ASIS 에디터에 붙음) */
+	.cm-merge-button.revert {
+		background-color: #f44336; /* 빨간색 */
+		background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-x" viewBox="0 0 16 16"><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/></svg>');
+	}
+
+	/* 삽입된 라인 (AI 추천 소스에 새로 추가된 라인) 배경색 및 경계선 */
+	.cm-inserted-line-bg {
+		background-color: #e6ffed; /* 연한 녹색 */
+		--border-left: 3px solid #66bb6a; /* 진한 녹색 */
+	}
+
+	/* 삭제된 라인 (현재 소스에서 AI가 삭제한 것으로 판단된 라인) 배경색 및 경계선 */
+	.cm-deleted-line-bg {
+		background-color: #ffebe9; /* 연한 빨간색 */
+		--border-left: 3px solid #ef5350; /* 진한 빨간색 */
+	}
+
+	/* CodeMirror 선택 영역 배경색 */
+	.cm-selectionBackground {
+		background-color: #d7d4f9 !important; /* 보라색 계열 */
+	}
+
+	/* 텍스트 선택 시 배경색 (브라우저 기본 선택색 재정의) */
+	.cm-editor ::selection {
+		background-color: #d7d4f9 !important;
+		color: inherit !important; /* 텍스트 색상은 유지 */
+	}
+	.cm-editor::-moz-selection { /* Firefox를 위한 접두사 */
+		background-color: #d7d4f9 !important;
+		color: inherit !important;
+	}
+}
+

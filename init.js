@@ -23,34 +23,27 @@ function replaceFileContent(fullPath) {
 
     let content = fs.readFileSync(fullPath, 'utf8');
 
-    // 1️⃣ [정밀 타격] 우리 프로젝트 메인 패키지 뼈대 치환
     content = content.split('com.nine.template').join(`com.${packageNewName}`);
 
-    // 2️⃣ [버전 가변형 방어선] 정규식을 사용해서 com.nine-template-lab:nine-mu:뒤에
-    // 어떤 버전 숫자가 오든(0.0.12 등) 통째로 추출해서 안전하게 보관합니다.
     const libRegex = /com\.nine-template-lab:nine-mu:[\d\.]+/g;
     const matchedLibs = content.match(libRegex);
     const originalLibString = matchedLibs ? matchedLibs[0] : null;
 
     const LIB_MARKER = '___NINE_MU_LIBRARY_PROTECTED_MARKER___';
     if (originalLibString) {
-        // 실제 빌드 파일에 있는 주소를 마커로 대피시킴
         content = content.split(originalLibString).join(LIB_MARKER);
     }
 
-    // 3️⃣ [일반 치환] 프로젝트 이름 무차별 변환 (이때 마커는 안전하게 보호됨)
     content = content.split('com.nine').join(`com.${packageNewName}`);
     content = content.split('nine-template-backend').join(`${newName}-backend`);
     content = content.split('nine-template-frontend').join(`${newName}-frontend`);
     content = content.split('nine-template').join(newName);
     content = content.split(pascalOldName).join(pascalNewName);
 
-    // 4️⃣ [최종 복구] 보관해뒀던 진짜 버전이 포함된 원본 주소로 완벽 복구
     if (originalLibString) {
         content = content.split(LIB_MARKER).join(originalLibString);
     }
 
-    // 5️⃣ 인텔리제이 런 실행 구성 프로필 변환
     if (fullPath.includes('runConfigurations')) {
         content = content.split('-Dspring.profiles.active=test').join('-Dspring.profiles.active=local');
     }
@@ -172,13 +165,11 @@ try {
         }
     });
 
-    // 모든 물리 구조 변경(폴더명, 파일명, 패키지 이동)이 끝난 상태에서 전역 텍스트 정밀 치환 완수
     globalTextLookup(__dirname);
-    console.log(`✅ 모든 대상 파일 내 텍스트 정밀 치환 완료`);
+    console.log(`모든 대상 파일 내 텍스트 정밀 치환 완료`);
 
-    // 초기화 완료 후 스크립트 자가 삭제
     fs.unlinkSync(__filename);
     console.log(`\n🎉 모든 프로젝트 초기화가 완료되었습니다. IntelliJ에서 프로젝트를 열어주세요.`);
 } catch (error) {
-    console.error('❌ 작업 중 오류 발생:', error);
+    console.error('작업 중 오류 발생:', error);
 }

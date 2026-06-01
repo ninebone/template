@@ -10,10 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@nine-lab/nine-ai": "^0.1.90",
-    "@nine-lab/nine-mu": "^0.1.391",
-    "@nine-lab/nine-util": "^0.9.157",
-    "@nine-lab/nine-ux": "^0.1.261",
+    "@ninebone/ai": "^0.1.97",
+    "@ninebone/mu": "^0.1.413",
+    "@ninebone/util": "^0.9.180",
+    "@ninebone/ux": "^0.10.276",
+    "exceljs": "^4.4.0",
+    "ninegrid2": "^6.1441.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"
   },

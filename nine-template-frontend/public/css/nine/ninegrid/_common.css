@@ -1,0 +1,11 @@
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+:root {
+	--font-size: 12px;
+	--font-family: "Noto Sans KR", sans-serif;
+	--color: #333;
+}

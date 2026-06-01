@@ -1,0 +1,33 @@
+:host(nx-buttons) {
+    display: flex;
+    --padding: 4px 16px;
+    justify-content: flex-end;
+    align-items: center;   /* 여기서 align-content 대신 align-items */
+    gap: 8px;
+
+    button {
+        all: unset;
+    }
+
+    button {
+        padding: 0 6px;
+        height: 28px;
+        outline: none;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        --margin-left: 5px;
+        cursor: pointer;
+        color: #333;
+        font-size: 14px;
+        min-width: 64px;
+        background: linear-gradient(135deg, #eee, #f0f0f0);
+        --background: linear-gradient(135deg, #333, #666);
+    }
+    button:hover {
+        background: linear-gradient(135deg, #ddd, #eee);
+    }
+    button:active {
+        background: linear-gradient(135deg, #ccc, #ddd);
+    }
+}
+
