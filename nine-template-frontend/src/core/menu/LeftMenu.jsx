@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
-// 🎯 부모(App.jsx)가 전달해주는 menuData를 props로 정직하게 받습니다.
 const LeftMenu = ({ menuData }) => {
 	const navigate = useNavigate();
 	const menuRef = useRef(null);
@@ -11,7 +10,6 @@ const LeftMenu = ({ menuData }) => {
 		color: "white",
 	};
 
-	// 🎯 menuData 알맹이가 바뀔 때마다 웹 컴포넌트 세터에 정직하게 주입
 	useEffect(() => {
 		if (menuData && menuData.length > 0 && menuRef.current) {
 			menuRef.current.data = menuData;

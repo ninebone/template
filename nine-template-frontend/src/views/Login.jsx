@@ -22,10 +22,8 @@ export const LoginPage = ({ onLoginSuccess }) => {
         try {
             const data = await api.post("/auth/login", { username, password });
 
-            // 부모 상태 갱신 및 리다이렉트
             onLoginSuccess(data.accessToken, data.username);
             nine.alert('로그인 성공!');
-            navigate('/', { replace: true });
         } catch (err) {
             setError('아이디 또는 비밀번호가 올바르지 않습니다.');
         } finally {
@@ -88,7 +86,6 @@ export const LoginPage = ({ onLoginSuccess }) => {
     );
 };
 
-// 🎯 하단에 깔끔하게 분리한 모던 스타일 정의 블록
 const styles = {
     container: {
         width: '100vw',
@@ -96,14 +93,14 @@ const styles = {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'white', // 개발자 친화적인 딥 다크 브라운 네이비
+        backgroundColor: 'white',
         fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
     },
     card: {
         width: '360px',
         padding: '40px',
         borderRadius: '12px',
-        backgroundColor: '#2b2b36', // 인텔리제이 테마와 유사한 다크 그레이
+        backgroundColor: '#2b2b36',
         boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
         border: '1px solid #3f3f4e',
         transition: 'all 0.3s ease'
@@ -171,7 +168,7 @@ const styles = {
     button: {
         width: '100%',
         padding: '14px',
-        background: '#4f46e5', // 세련된 인디고 블루 톤
+        background: '#4f46e5',
         color: '#ffffff',
         border: 'none',
         borderRadius: '6px',

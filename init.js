@@ -9,13 +9,11 @@ const newName = path.basename(__dirname); // 예: test-ap
 const oldName = 'nine-template';
 const pascalOldName = 'NineTemplate';
 
-// PascalCase 변환 (test-ap -> TestAp)
 const pascalNewName = newName
     .split('-')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join('');
 
-// 패키지 명칭 규칙 (test-ap -> testap)
 const packageNewName = newName.split('-').join('').toLowerCase();
 
 console.log(`🚀 [${newName}] 기반 '안전 최우선' 정밀 리팩토링 초기화를 시작합니다...`);
@@ -31,16 +29,9 @@ function replaceFileContent(fullPath) {
     const PROTECT_LAB_MARKER = '___NINE_LAB_PROTECTED___';
     const PROTECT_AI_MARKER = '___NINE_AI_PROTECTED___';
 
-    // 1. build.gradle 내부의 implementation("com.nine-lab:nine-mu:0.0.13") 보호
     content = content.replace(/com\.nine-lab/g, PROTECT_LAB_MARKER);
 
-    // 2. 자바 메인 클래스의 "com.ninelab.ai" 컴포넌트 스캔 경로 보호
     content = content.replace(/com\.ninelab\.ai/g, PROTECT_AI_MARKER);
-
-    // -------------------------------------------------------------------------
-    // 🔄 [안전 치환 구역] - 오직 해당 템플릿 고유 경로만 정밀 타격합니다.
-    // -------------------------------------------------------------------------
-    // 정확한 패키지 핑포인팅 치환 먼저 수행
     content = content.split('com.nine.template').join(`com.${packageNewName}`);
     content = content.split('com.nine').join(`com.${packageNewName}`);
 
@@ -54,9 +45,6 @@ function replaceFileContent(fullPath) {
         content = content.split('-Dspring.profiles.active=test').join('-Dspring.profiles.active=local');
     }
 
-    // -------------------------------------------------------------------------
-    // 🔓 [보호 복원 구역] - 숨겨놓았던 진짜 소중한 이름들을 원상태로 되돌립니다.
-    // -------------------------------------------------------------------------
     content = content.split(PROTECT_LAB_MARKER).join('com.nine-lab');
     content = content.split(PROTECT_AI_MARKER).join('com.ninelab.ai');
 
@@ -111,7 +99,6 @@ try {
         fs.writeFileSync(path.join(originalFePath, '.env.development'), 'VITE_API_BASE_URL=/api\n', 'utf8');
     }
 
-    // 파일명 물리 리네임 단계
     const oldMainJavaDir = path.join(__dirname, 'nine-template-backend/src/main/java/com/nine/template');
     const oldTestJavaDir = path.join(__dirname, 'nine-template-backend/src/test/java/com/nine/template');
 
@@ -147,7 +134,6 @@ try {
     removeEmptyDirs(path.join(__dirname, 'nine-template-backend/src/main/java/com/nine'));
     removeEmptyDirs(path.join(__dirname, 'nine-template-backend/src/test/java/com/nine'));
 
-    // 대형 프로젝트 대단위 폴더명 최종 물리 변경
     const dirTargets = [
         { from: 'nine-template-backend', to: `${newName}-backend` },
         { from: 'nine-template-frontend', to: `${newName}-frontend` }
@@ -160,7 +146,6 @@ try {
         }
     });
 
-    // 텍스트 글로벌 치환 기동
     globalTextLookup(__dirname);
     console.log(`모든 대상 파일 내 텍스트 정밀 치환 완료`);
 

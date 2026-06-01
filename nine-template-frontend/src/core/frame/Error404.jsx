@@ -1,5 +1,3 @@
-//import React from "react";
-
 const Error404 = () => {
 	const handleGoHome = () => {
 		window.location.href = '/';
@@ -8,22 +6,17 @@ const Error404 = () => {
 	return (
 		<div style={styles.container}>
 			<div style={styles.contentBox}>
-				{/* 404 엠블럼 데코 */}
 				<div style={styles.badge}>ERROR CODE</div>
 
-				{/* 거대한 404 에러 코드 */}
 				<h1 style={styles.errorCode}>404</h1>
 
-				{/* 상태 메시지 */}
 				<h2 style={styles.title}>Page Not Found</h2>
 
-				{/* 상세 설명 */}
 				<p style={styles.description}>
 					요청하신 페이지를 찾을 수 없습니다.<br />
 					주소가 변경되었거나 잘못된 경로로 접근하셨을 수 있습니다.
 				</p>
 
-				{/* 홈으로 복귀하는 버튼 */}
 				<button
 					onClick={handleGoHome}
 					style={styles.homeBtn}
@@ -45,25 +38,24 @@ const Error404 = () => {
 	);
 };
 
-// 🎯 확실하게 정중앙에 고정시키는 스타일 블록
 const styles = {
 	container: {
 		width: '100%',
-		height: '100vh',          // ❌ 100% 대신 100vh로 화면 전체 높이를 확보하여 완벽한 수직 중앙 정렬 보장
+		height: '100vh',
 		display: 'flex',
-		justifyContent: 'center', // 가로 기준 정중앙
-		alignItems: 'center',     // 세로 기준 정중앙
+		justifyContent: 'center',
+		alignItems: 'center',
 		backgroundColor: 'trasparent',
 		fontFamily: "'Segoe UI', Roboto, sans-serif",
 		boxSizing: 'border-box',
-		position: 'absolute',     // 부모 레이아웃의 내부 패딩을 무시하고 꽉 채우기 위해 absolute 가드
+		position: 'absolute',
 		top: 0,
 		left: 0
 	},
 	contentBox: {
 		textAlign: 'center',
 		padding: '40px',
-		backgroundColor: '#2b2b36', // 탑메뉴, 로그인 카드와 톤앤매너 싱크 일치
+		backgroundColor: '#2b2b36',
 		borderRadius: '12px',
 		boxShadow: '0 12px 32px rgba(0, 0, 0, 0.25)',
 		border: '1px solid #3f3f4e',
@@ -82,7 +74,7 @@ const styles = {
 		marginBottom: '16px'
 	},
 	errorCode: {
-		fontSize: '110px',        // 크기를 시원하게 확장
+		fontSize: '110px',
 		fontWeight: '900',
 		margin: '0 0 10px 0',
 		color: '#4f46e5',
@@ -113,7 +105,7 @@ const styles = {
 		boxShadow: '0 4px 12px rgba(79, 70, 229, 0.2)',
 		transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
 		outline: 'none',
-		width: '100%'            // 버튼을 와이드하게 펼쳐 모던함 강조
+		width: '100%'
 	}
 };
 

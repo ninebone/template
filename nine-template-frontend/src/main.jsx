@@ -8,7 +8,8 @@ nine.setup({
     cssPath: "/css/nine",
     debug: {
         enable: import.meta.env.VITE_DEBUG_ENABLE === 'true',
-        filter: ["nine-ux", "nine-util", "nine-mu", "nine-template"],
+        //filter: ["nine-ux", "nine-util", "nine-mu", "nine-template"],
+        filter: ["nine-template"],
     },
 });
 

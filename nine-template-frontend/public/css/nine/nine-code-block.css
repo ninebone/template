@@ -1,0 +1,135 @@
+/* @nine-lab/nine-ux/dist/css/nine-code-block.css */
+
+:host(nine-code-block) {
+	display: block;
+	margin: 16px 0;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+
+	/* [기본 테마 - Light] */
+	--ncb-bg: #ffffff;
+	--ncb-header-bg: #f6f8fa;
+	--ncb-border: #d0d7de;
+	--ncb-text: #24292f;
+	--ncb-lang: #57606a;
+	--ncb-code-bg: #f6f8fa;
+	--ncb-btn-bg: rgba(27, 31, 36, 0.05);
+	--ncb-btn-hover: rgba(27, 31, 36, 0.1);
+
+	/* Nesting: Wrapper & Structure */
+	.wrapper {
+		background: var(--ncb-bg);
+		border: 1px solid var(--ncb-border);
+		border-radius: 8px;
+		overflow: hidden;
+		transition: border-color 0.2s ease;
+	}
+
+	.header {
+		background: var(--ncb-header-bg);
+		border-bottom: 1px solid var(--ncb-border);
+		padding: 2px 12px 2px 16px;
+		display: flex;
+		align-items: center;
+		gap: 12px;
+	}
+
+	.content {
+		padding: 0px 16px;
+		overflow-x: auto;
+		background: var(--ncb-code-bg);
+	}
+
+	.dots {
+		display: flex;
+		gap: 6px;
+		.dot {
+			width: 12px;
+			height: 12px;
+			border-radius: 50%;
+			&.red { background: #ff5f56; }
+			&.yellow { background: #ffbd2e; }
+			&.green { background: #27c93f; }
+		}
+	}
+
+	.lang {
+		font-size: 12px;
+		font-weight: 600;
+		color: var(--ncb-lang);
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+	}
+
+	.copy-btn {
+		margin-left: auto;
+		width: 32px;
+		height: 32px;
+		border-radius: 6px;
+
+		/* [수정] 배경과 테두리 제거 */
+		border: none;
+		background: transparent;
+
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		transition: all 0.2s;
+		position: relative;
+		padding: 0;
+		outline: none;
+
+		/* 아이콘 기본 설정 */
+		&::before {
+			content: "";
+			display: block;
+			width: 18px;
+			height: 18px;
+			background-color: var(--ncb-text); /* 기본 아이콘 색상 */
+			transition: background-color 0.2s;
+
+			-webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='14' height='14' x='8' y='8' rx='2' ry='2'/%3E%3Cpath d='M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2'/%3E%3C/svg%3E");
+			mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='14' height='14' x='8' y='8' rx='2' ry='2'/%3E%3Cpath d='M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2'/%3E%3C/svg%3E");
+			-webkit-mask-repeat: no-repeat;
+			mask-repeat: no-repeat;
+			mask-size: contain;
+		}
+
+		/* [수정] Hover 시 배경 대신 아이콘 색상 변경 */
+		&:hover::before {
+			background-color: var(--ncb-btn-hover-color);
+		}
+
+		&:hover {
+			background: transparent;
+		}
+
+		&:active {
+			background: transparent;
+		}
+
+		/* 복사 완료 상태 */
+		&.copied {
+			background: transparent; /* 배경 미사용 */
+			&::before {
+				background-color: #238636; /* 체크 아이콘은 초록색으로 */
+				-webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+				mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+			}
+		}
+	}
+}
+
+/* [다크 모드 설정] */
+@media (prefers-color-scheme: dark) {
+	:host(nine-code-block) {
+		--ncb-text: #c9d1d9;
+		--ncb-btn-hover-color: #58a6ff; /* 다크모드용 호버 블루 */
+	}
+}
+
+/* [theme="dark" 속성 설정] */
+:host(nine-code-block[theme="dark"]) {
+	--ncb-text: #c9d1d9;
+	--ncb-btn-hover-color: #58a6ff;
+}

@@ -1,7 +1,5 @@
-//import React from "react";
-
 const TopMenu = () => {
-	// 🎯 버튼 클릭 시 즉시 로컬스토리지 밀고 루트('/')로 새로고침하는 원터치 함수
+
 	const handleLogoutClick = () => {
 		localStorage.clear();
 		window.location.href = '/';
@@ -14,13 +12,11 @@ const TopMenu = () => {
 				Nine Template Workspace
 			</div>
 
-			{/* 2️⃣ 우측: 조건문 없이 '무조건' 렌더링되는 로그아웃 SVG 버튼 */}
 			<button
 				onClick={handleLogoutClick}
 				style={styles.logoutBtn}
 				title="로그아웃"
 				onMouseEnter={(e) => {
-					//e.currentTarget.style.backgroundColor = 'rgba(220, 53, 69, 0.2)';
 					const svg = e.currentTarget.querySelector('svg');
 					if (svg) svg.style.stroke = '#ffffff';
 				}}
@@ -30,7 +26,6 @@ const TopMenu = () => {
 					if (svg) svg.style.stroke = '#cccccc';
 				}}
 			>
-				{/* 흰색 화이트 고정 SVG */}
 				<svg
 					width="20"
 					height="20"

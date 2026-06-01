@@ -1,0 +1,205 @@
+:host(nine-tab) {
+    position: relative;
+
+    .tabs {
+        display: flex;
+        button {
+            display: none;
+            position: absolute;
+            --top: 2px;
+            right: 2px;
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+            border: none;
+            background-color: transparent;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: auto;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="darkgray" class="bi bi-box-arrow-in-up-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M6.364 13.5a.5.5 0 0 0 .5.5H13.5a1.5 1.5 0 0 0 1.5-1.5v-10A1.5 1.5 0 0 0 13.5 1h-10A1.5 1.5 0 0 0 2 2.5v6.636a.5.5 0 1 0 1 0V2.5a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5H6.864a.5.5 0 0 0-.5.5"/><path fill-rule="evenodd" d="M11 5.5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793l-8.147 8.146a.5.5 0 0 0 .708.708L10 6.707V10.5a.5.5 0 0 0 1 0z"/></svg>');
+            animation: rotate-out 0.3s ease-in-out forwards;
+        }
+    }
+    .tab-button {
+        padding: 8px;
+        border: 1px solid #ccc;
+        text-align: center;
+        outline: 0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .tab-button:hover {
+        filter: brightness(80%);
+        --background-color: #777;            /* 진한 배경으로 강조 */
+        --box-shadow: 0 2px 8px rgba(0,0,0,0.3); /* 입체감 glow */
+        transform: scale(1.05);            /* 약간 확대 */
+    }
+    .tab-pages {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        transition: height 0.5s ease-in-out;
+        transform: translateY(-1px);
+    }
+    .tab-page {
+        position: absolute;
+        width: 100%;
+        top: 0;
+        transition: left 0.5s ease-in-out;
+        padding: 16px;
+        box-sizing: border-box;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: left;
+    }
+    .tab-page.active {
+        left: 0;
+    }
+    .tab-page.exit-left {
+        left: -100%;
+    }
+    .tab-page.exit-right {
+        left: 100%;
+    }
+
+    &:host(.fixed-height) {
+        .tab-pages {
+            flex: 1;
+            height: 100%;
+        }
+        .tab-page {
+            height: 100%;
+            min-height: 0;
+        }
+    }
+
+    &:host(.theme-1) {
+        .tabs {
+            --border-bottom: 1px solid #eee;
+            gap: 3px;
+        }
+        .tab-button {
+            color: #666;
+            font-weight: 500;
+            transform: translateY(1px);
+            z-index: 1;
+            --border-bottom: 1px solid #ccc;
+        }
+        .tab-button.active {
+            color: #666;
+            font-weight: 700;
+            border-bottom: 1px solid white;
+        }
+        .tab-pages {
+            border: 1px solid #ccc;
+        }
+    }
+
+    &:host(.theme-2) {
+        .tabs {
+            border-bottom: 1px solid #eee;
+            gap: 40px;
+        }
+        .tab-button {
+            color: #666;
+            font-weight: 500;
+            border: none;
+        }
+        .tab-button.active {
+            color: green;
+            font-weight: 700;
+            border-bottom: 3px solid green;
+        }
+    }
+
+    &:host(.theme-3) {
+        .tabs {
+            border-bottom: 1px solid #eee;
+            gap: 16px;
+            button {
+                display: block;
+            }
+        }
+        .tab-button {
+            color: #666;
+            font-weight: 500;
+            border: none;
+            padding: 4px;
+            font-size: 12px;
+        }
+        .tab-button.active {
+            color: green;
+            font-weight: 700;
+            border-bottom: 3px solid green;
+        }
+        .tab-pages {
+            border-bottom: 1px solid #f0f0f0;
+            height: 100%;
+        }
+        .tab-page {
+            padding: 4px 16px;
+            font-size: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            button.search {
+                margin-top: -4px;
+                margin-bottom: -4px;
+                margin-right: -16px;
+                cursor: pointer;
+            }
+        }
+    }
+
+    &:host(.theme-4) {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+
+
+        .tabs {
+            border-bottom: 1px solid #eee;
+            gap: 16px;
+            button {
+                display: block;
+            }
+        }
+        .tab-button {
+            color: #666;
+            font-weight: 500;
+            border: none;
+            padding: 4px;
+            font-size: 12px;
+        }
+        .tab-button.active {
+            color: green;
+            font-weight: 700;
+            border-bottom: 3px solid green;
+        }
+        .tab-pages {
+            border-bottom: 1px solid #f0f0f0;
+            height: 100% !important;
+            div {
+                height: 100%;
+            }
+        }
+        .tab-page {
+            padding: 4px 0 0;
+            font-size: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            button.search {
+                margin-top: -4px;
+                margin-bottom: -4px;
+                margin-right: -16px;
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+
+

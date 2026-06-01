@@ -1,5 +1,5 @@
 plugins {
-    id 'base' // build, clean 등 기본 태스크를 제공합니다.
+    id 'base'
     id "com.github.node-gradle.node" version "7.0.2"
 }
 
