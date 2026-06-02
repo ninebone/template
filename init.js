@@ -95,23 +95,25 @@ function removeEmptyDirs(dirPath) {
 try {
     const fePath = path.join(__dirname, 'nine-template-frontend');
 
-    const envMappings = [
-        { example: '.env.example', target: '.env' },
-        { example: '.env.example.development', target: '.env.development' },
-        { example: '.env.example.production', target: '.env.production' }
-    ];
+    if (fs.existsSync(fePath)) {
+        // 1. 프론트엔드 폴더 내부의 모든 파일 목록을 긁어옵니다.
+        const feFiles = fs.readdirSync(fePath);
 
-    envMappings.forEach(mapping => {
-        const examplePath = path.join(fePath, mapping.example);
-        const targetPath = path.join(fePath, mapping.target);
+        feFiles.forEach(file => {
+            // 2. 파일명이 '.env.example'로 시작하는 가이드 파일들을 찾아냅니다.
+            if (file.startsWith('.env.example')) {
+                const examplePath = path.join(fePath, file);
 
-        if (fs.existsSync(examplePath)) {
-            // 원본 가이드 파일을 있는 그대로 읽어서 복사본을 만듭니다 (하드코딩 치환 절대 없음 ❌)
-            const content = fs.readFileSync(examplePath, 'utf8');
-            fs.writeFileSync(targetPath, content, 'utf8');
-            console.log(`📝 ${mapping.example} ➡️ ${mapping.target} 복사 완료`);
-        }
-    });
+                // 3. 목적지 파일명 계산 (.env.example ➡️ .env / .env.example.development ➡️ .env.development)
+                const targetFile = file.replace('.env.example', '.env');
+                const targetPath = path.join(fePath, targetFile);
+
+                // 4. 통째로 다이렉트 파일 복사 (텍스트 치환 전혀 없음 ❌)
+                fs.copyFileSync(examplePath, targetPath);
+                console.log(`📝 자동 발견 복사: ${file} ➡️ ${targetFile}`);
+            }
+        });
+    }
 
     const oldMainJavaDir = path.join(__dirname, 'nine-template-backend/src/main/java/com/nine/template');
     const oldTestJavaDir = path.join(__dirname, 'nine-template-backend/src/test/java/com/nine/template');
