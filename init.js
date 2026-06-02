@@ -95,25 +95,21 @@ function removeEmptyDirs(dirPath) {
 try {
     const fePath = path.join(__dirname, 'nine-template-frontend');
 
-    if (fs.existsSync(fePath)) {
-        // 1. 프론트엔드 폴더 내부의 모든 파일 목록을 긁어옵니다.
-        const feFiles = fs.readdirSync(fePath);
+   if (fs.existsSync(fePath)) {
+       const feFiles = fs.readdirSync(fePath);
 
-        feFiles.forEach(file => {
-            // 2. 파일명이 '.env.example'로 시작하는 가이드 파일들을 찾아냅니다.
-            if (file.startsWith('.env.example')) {
-                const examplePath = path.join(fePath, file);
+       feFiles.forEach(file => {
+           if (file.startsWith('.env.example')) {
+               const oldPath = path.join(fePath, file);
 
-                // 3. 목적지 파일명 계산 (.env.example ➡️ .env / .env.example.development ➡️ .env.development)
-                const targetFile = file.replace('.env.example', '.env');
-                const targetPath = path.join(fePath, targetFile);
+               const targetFile = file.replace('.env.example', '.env');
+               const newPath = path.join(fePath, targetFile);
 
-                // 4. 통째로 다이렉트 파일 복사 (텍스트 치환 전혀 없음 ❌)
-                fs.copyFileSync(examplePath, targetPath);
-                console.log(`📝 자동 발견 복사: ${file} ➡️ ${targetFile}`);
-            }
-        });
-    }
+               fs.renameSync(oldPath, newPath);
+               console.log(`🚚 자동 파일 이동 완료: ${file} ➡️ ${targetFile}`);
+           }
+       });
+   }
 
     const oldMainJavaDir = path.join(__dirname, 'nine-template-backend/src/main/java/com/nine/template');
     const oldTestJavaDir = path.join(__dirname, 'nine-template-backend/src/test/java/com/nine/template');
