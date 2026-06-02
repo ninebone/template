@@ -16,7 +16,7 @@ const pascalNewName = newName
 
 const packageNewName = newName.split('-').join('').toLowerCase();
 
-console.log(`🚀 [${newName}] 기반 '안전 최우선' 정밀 리팩토링 초기화를 시작합니다...`);
+console.log(`[${newName}] 기반 '안전 최우선' 정밀 리팩토링 초기화를 시작합니다...`);
 
 function replaceFileContent(fullPath) {
     if (!fs.existsSync(fullPath)) return;
@@ -106,7 +106,7 @@ try {
                const newPath = path.join(fePath, targetFile);
 
                fs.renameSync(oldPath, newPath);
-               console.log(`🚚 자동 파일 이동 완료: ${file} ➡️ ${targetFile}`);
+               console.log(`자동 파일 이동 완료: ${file} ➡️ ${targetFile}`);
            }
        });
    }
@@ -162,7 +162,7 @@ try {
     console.log(`모든 대상 파일 내 텍스트 정밀 치환 완료`);
 
     fs.unlinkSync(__filename);
-    console.log(`\n🎉 모든 프로젝트 초기화가 완료되었습니다. IntelliJ에서 프로젝트를 열어주세요.`);
+    console.log(`\n모든 프로젝트 초기화가 완료되었습니다. IntelliJ에서 프로젝트를 열어주세요.`);
 } catch (error) {
     console.error('작업 중 오류 발생:', error);
 }
