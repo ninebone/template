@@ -94,29 +94,24 @@ function removeEmptyDirs(dirPath) {
 
 try {
     const fePath = path.join(__dirname, 'nine-template-frontend');
-    const envExamplePath = path.join(fePath, '.env.example');
 
-    // 🎯 [.env.example 기반 복사 규칙 정립]
-    if (fs.existsSync(envExamplePath)) {
-        let envContent = fs.readFileSync(envExamplePath, 'utf8');
+    const envMappings = [
+        { example: '.env.example', target: '.env' },
+        { example: '.env.example.development', target: '.env.development' },
+        { example: '.env.example.production', target: '.env.production' }
+    ];
 
-        // 1. .env 파일 생성 (운영/기본 배포용: API 주소를 공백 처리하거나 세팅)
-        const envPath = path.join(fePath, '.env');
-        fs.writeFileSync(envPath, envContent, 'utf8');
-        console.log(`📝 .env.example을 기반으로 기본 .env 생성 완료`);
+    envMappings.forEach(mapping => {
+        const examplePath = path.join(fePath, mapping.example);
+        const targetPath = path.join(fePath, mapping.target);
 
-        // 2. .env.development 파일 생성 (로컬 개발용: /api 프록시 주소 자동 주입)
-        const envDevPath = path.join(fePath, '.env.development');
-        if (envContent.includes('VITE_API_BASE_URL=')) {
-            // 기존 주소가 뭐였든 로컬 개발용 프록시 경로인 /api로 정밀 변경
-            envContent = envContent.replace(/VITE_API_BASE_URL=.*/g, 'VITE_API_BASE_URL=/api');
-        } else {
-            // 혹시 해당 변수가 한 줄 밀렸거나 없다면 강제로 하단 추가
-            envContent += '\nVITE_API_BASE_URL=/api\n';
+        if (fs.existsSync(examplePath)) {
+            // 원본 가이드 파일을 있는 그대로 읽어서 복사본을 만듭니다 (하드코딩 치환 절대 없음 ❌)
+            const content = fs.readFileSync(examplePath, 'utf8');
+            fs.writeFileSync(targetPath, content, 'utf8');
+            console.log(`📝 ${mapping.example} ➡️ ${mapping.target} 복사 완료`);
         }
-        fs.writeFileSync(envDevPath, envContent, 'utf8');
-        console.log(`📝 .env.example을 기반으로 개발용 .env.development 생성 완료`);
-    }
+    });
 
     const oldMainJavaDir = path.join(__dirname, 'nine-template-backend/src/main/java/com/nine/template');
     const oldTestJavaDir = path.join(__dirname, 'nine-template-backend/src/test/java/com/nine/template');
