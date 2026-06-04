@@ -1,4 +1,16 @@
 :root {
+  --font-size: 12px;
+  --font-family: "Noto Sans KR", sans-serif;
+  --color: #333;
+
+  --input-color: #333;
+  --input-background-color: white;
+  --input-border-color: #ccc;
+  --input-hover-border-color: #999;
+  --input-focus-border-color: green;
+  --input-padding: 4px 8px;
+  --input-font-size: 12px;
+
   --text: #6b6375;
   --text-h: #08060d;
   --bg: #fff;
@@ -63,6 +75,7 @@ body {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  height: 100vh; /* 전체 화면 */
 }
 
 h1,

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nine-template.domain.example.crud.mapper">
+
+    <sql id="baseColumns">
+        user_id,
+        user_name,
+        role,
+        email,
+        tel,
+        gender,
+        birth_year,
+        available_time,
+        status,
+        created_at,
+        created_id,
+        updated_at,
+        updated_id
+    </sql>
+
+    <select id="selectList" resultType="com.ninelab.ai.util.CamelCaseMap">
+        SELECT
+            <include refid="baseColumns"/>
+        FROM
+            t_user
+        <where>
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+            <if test="userName != null and userName != ''">
+                AND user_name LIKE CONCAT('%', #{userName}, '%')
+            </if>
+            <if test="role != null and role != ''">
+                AND role = #{role}
+            </if>
+            <if test="email != null and email != ''">
+                AND email LIKE CONCAT('%', #{email}, '%')
+            </if>
+            <if test="tel != null and tel != ''">
+                AND tel LIKE CONCAT('%', #{tel}, '%')
+            </if>
+            <if test="gender != null and gender != ''">
+                AND gender = #{gender}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+            <if test="_nineAiGenerated != null"> AND ${_nineAiGenerated} </if>
+        </where>
+        ORDER BY created_at DESC
+    </select>
+
+    <select id="selectOne" resultType="com.ninelab.ai.util.CamelCaseMap">
+        SELECT
+            <include refid="baseColumns"/>
+        FROM
+            t_user
+        WHERE
+            user_id = #{userId}
+    </select>
+
+    <insert id="insert">
+        INSERT INTO t_user (
+            user_name,
+            role,
+            email,
+            tel,
+            gender,
+            birth_year,
+            available_time,
+            status,
+            created_at,
+            created_id,
+            updated_at,
+            updated_id
+        ) VALUES (
+            #{userName},
+            #{role},
+            #{email},
+            #{tel},
+            #{gender},
+            #{birthYear},
+            #{availableTime},
+            #{status},
+            NOW(),
+            #{createdId},
+            NOW(),
+            #{createdId}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE t_user
+        SET
+            user_name = #{userName},
+            role = #{role},
+            email = #{email},
+            tel = #{tel},
+            gender = #{gender},
+            birth_year = #{birthYear},
+            available_time = #{availableTime},
+            status = #{status},
+            updated_at = NOW(),
+            updated_id = #{updatedId}
+        WHERE
+            user_id = #{userId}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM t_user
+        WHERE user_id = #{userId}
+    </delete>
+
+</mapper>

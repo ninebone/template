@@ -24,6 +24,17 @@
     "parentId": "nine-default",
     "name": "자연어 데이타 조회",
     "desc": "자연어 데이타 조회",
-    "class": "icon-none"
+    "class": "icon-none",
+    "is-nine": true
+  },
+  {
+    "level": 2,
+    "id": "example-1",
+    "path": "/nine/example1",
+    "parentId": "nine-default",
+    "name": "화면이동 예제",
+    "desc": "화면이동 예제",
+    "class": "icon-none",
+    "is-nine": true
   }
 ]

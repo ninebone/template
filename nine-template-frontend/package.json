@@ -11,11 +11,11 @@
   },
   "dependencies": {
     "@ninebone/ai": "^0.1.98",
-    "@ninebone/mu": "^0.1.414",
-    "@ninebone/util": "^0.9.184",
-    "@ninebone/ux": "^0.10.278",
+    "@ninebone/mu": "^0.1.450",
+    "@ninebone/util": "^0.9.196",
+    "@ninebone/ux": "^0.10.281",
     "exceljs": "^4.4.0",
-    "ninegrid2": "^6.1441.0",
+    "ninegrid2": "^6.1448.1",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"
   },
