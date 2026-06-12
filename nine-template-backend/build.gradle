@@ -73,29 +73,21 @@ jar {
     enabled = false
 }
 
-/**
- * 3. 프론트엔드 빌드 자동화 및 정적 자원 통합 테스크
- */
+
 task copyFrontEnd(type: Copy) {
-    // 템플릿의 프론트엔드 폴더(Vite) 빌드 결과물 위치 지정
+    // 1. 프론트엔드 일반 사용자 화면 복사
     from("${project(':nine-template-frontend').projectDir}/dist") {
         into ""
     }
-    // Gradle 최신 사양에 맞춘 최상위 static 빌드 디렉토리 매핑
     into "${project.layout.buildDirectory.dir('resources/main/static').get()}"
 }
 
-// 프론트엔드 자체 빌드 스크립트 연결
-copyFrontEnd.dependsOn(':nine-template-frontend:installAndBuild')
+// 🔴 핵심 수정 부분: build 대신 installAndBuild를 호출하도록 변경
+// 이렇게 해야 빌드 서버나 배포 시점에 'npm install'이 강제되어
+// 로컬의 'npm link'가 제거된 깨끗한 패키지로 빌드됩니다.
+copyFrontEnd.dependsOn(
+        ':nine-template-frontend:installAndBuild'
+)
 
-// 💡 [핵심 수정] 로컬 기동(processResources) 시에는 프론트엔드 빌드를 수행하지 않습니다.
-// 대신 최종 배포 파일(bootJar)을 만들 때만 자동으로 빌드 및 복사가 수행되도록 설정합니다.
-bootJar.configure {
-    // Gradle 실행 인자(Task 목록) 중에 'bootJar'가 명확하게 단독으로 포함되어 있을 때만 실행
-    onlyIf {
-        gradle.startParameter.taskNames.contains('bootJar') ||
-                gradle.startParameter.taskNames.contains(':nine-template-backend:bootJar')
-    }
-    dependsOn copyFrontEnd
-}
-
+// 리소스를 처리하기 전에 복사가 완료되어야 함
+processResources.dependsOn(copyFrontEnd)
