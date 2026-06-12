@@ -1,0 +1,1210 @@
+@keyframes collapse {
+	0% { width: 350px; transform: translateX(0); }
+	100% { width: 0px; transform: translateX(100%); }
+}
+
+@keyframes expand {
+	0% { width: 0px; transform: translateX(100%); }
+	100% { width: 350px; transform: translateX(0); }
+}
+
+@keyframes slideFade {
+	0% { transform: translateY(-20px); opacity: 0; }
+	100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes zoomIn {
+	0% { transform: scale(0.9); opacity: 0; }
+	100% { transform: scale(1); opacity: 1; }
+}
+@keyframes zoomOut {
+	0% { transform: scale(1); opacity: 1; }
+	100% { transform: scale(0.9); opacity: 0; }
+}
+
+@keyframes slideLeft {
+	0% { transform: translateX(100%); opacity: 0; }
+	100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideRight {
+	from { transform: translateX(0); opacity: 1;  }
+	to { transform: translateX(100%); opacity: 0; }
+}
+
+:host(nine-chat) {
+	position: absolute;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	width: 350px;
+	background: #f9f9f9;
+	z-index: 999;
+	opacity: 0.99;
+	animation: expand 0.1s ease-in-out forwards;
+	border-left: 1px solid #eee;
+	box-shadow: 0 0 8px 4px rgba(0, 0, 0, 0.3); /* ✅ 퍼지는 그림자 */
+
+	.expand-icon {
+		display: none;
+	}
+
+	.wrapper {
+		height: 100%;
+		display: block;
+		overflow: hidden;
+	}
+
+	.menu {
+    	z-index: 1;
+    	width: 32px;
+    	background-color: transparent;
+    	display: flex;
+    	flex-direction: column;
+    	position: fixed;
+    	top: 0;
+    	right: 0;
+    	height: 320px; /* 높이 500px 기준 */
+
+        --alpha: 220;
+
+        /* 🚀 [스케일 공식 적용] 형태 변형 없이 Y축 기둥만 변수만큼 정확히 늘어납니다. */
+
+
+        /* 질문자님의 황금 원본 코드 그대로 박제 (수정 절대 없음) */
+        --clip-path: path('M 32,0 L 32,270 Q 32,70 16,52 Q 0,40 0,0 Z');
+
+    	/* 🚀 원래 코드의 모든 Y축 값에 +80을 더해 그대로 아래로 내렸습니다. */
+    	--clip-path: path('M 32,0 L 32,320 Q 32,120 16,102 Q 0,90 0,0 Z');
+    	--clip-path: path('M 32,0 L 32,240 Q 32,40 16,22 Q 0,10 0,0 Z');
+    }
+
+	/* 🎯 SVG를 활용한 우측 하단 역라운드 꼬리 */
+    .menu1::after {
+    --clip-path: path('M 32,0 L 32,240 Q 32,40 16,22 Q 0,10 0,0 Z');
+      content: "";
+      position: absolute;
+
+      /* 💡 툴바 본체의 우측 끝(0px) 바닥 바로 아래에 매달기 */
+      right: 0px;
+      bottom: -231px;   /* 꼬리 높이에 맞춰 5배 늘림 (기존 -32px -> -160px) */
+      width: 24px;      /* 꼬리 가로폭 2배 늘림 (기존 16px -> 32px) */
+      height: 240px;    /* 꼬리 세로 높이 5배 늘림 (기존 32px -> 160px) */
+
+      clip-path: path('M 32,0 L 32,160 Q 32,40 16,22 Q 0,10 0,0 Z');
+
+      pointer-events: none;
+    }
+
+	.collapse-icon {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+		height: 32px;
+		cursor: pointer;
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: auto;
+		background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M6 8a.5.5 0 0 0 .5.5h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L12.293 7.5H6.5A.5.5 0 0 0 6 8m-2.5 7a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 1 0v13a.5.5 0 0 1-.5.5"/></svg>');
+	}
+
+	.menu-filter {
+		background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5z"/></svg>');
+	}
+
+	.menu-general {
+		background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9 9 0 0 0 8 15"/></svg>');
+	}
+
+	.menu-db {
+		background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9 9 0 0 0 8 15"/></svg>');
+	}
+
+	.menu-setting {
+		background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/></svg>');
+	}
+
+	.make-menu {
+		background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/></svg>');
+	}
+
+	.source-gen {
+		background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/></svg>');
+	}
+
+	.menu-icon {
+		display: none;
+		/* align-content: space-between; */
+		justify-content: center;
+		align-items: center;
+		height: 32px;
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: auto;
+	}
+	.menu-icon.active {
+		--border-right: 4px solid #999;
+		background-color: #c0c0c0;
+		--filter: brightness(170%);
+	}
+
+	.settings {
+		display: none;
+		position: absolute;
+		background: #fff;
+		left: 0;
+		right: 30px;
+		top: 0;
+		bottom: 0;
+		justify-content: center;
+		align-items: center;
+		opacity: 0;
+		transform: translateX(100%);
+		transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+	}
+
+	.settings.expand {
+		display: flex;
+		animation: slideLeft 0.3s ease-out forwards;
+	}
+
+	.container {
+		height: 100%;
+		display: flex;
+		--background: white;
+		width: 100%;
+		flex-direction: column;
+
+		.head {
+			width: 100%;
+			height: 32px;
+			background: #f0f0f0;
+			--border: 1px solid #ccc;
+			display: flex;
+			flex-shrink: 0;
+			align-items: center;
+			justify-content: flex-start;
+			padding-left: 16px;
+
+			.logo {
+				position: relative;
+				width: 00px;
+				height: 18px;
+				background-repeat: no-repeat;
+				background-position: center;
+				background-size: auto;
+				--background-image: url('data:image/svg+xml;utf8,<svg version="1.1" id="fin" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 140 35" style="enable-background:new 0 0 140 35;" xml:space="preserve"><g><g fill="darkgray"><path d="M131.73,34.14l-80.24,0c-3.91,0-7.1-3.18-7.11-7.1l2.52,0c0,2.53,2.06,4.58,4.59,4.58l80.24,0 c2.53,0,4.59-2.06,4.59-4.59v-8.26c0-2.53-2.06-4.59-4.59-4.59l-29.75,0v-2.52l29.75,0c3.92,0,7.11,3.19,7.11,7.11v8.26 C138.84,30.95,135.65,34.14,131.73,34.14z"/> </g> <g fill="dodgerblue"> <path d="M11.96,0.86L11.96,0.86H8.73h0l0,0L1.16,21.02h3.6l1.93-5.4H14l1.93,5.4h3.6L11.96,0.86L11.96,0.86z M12.84,12.38H7.85l2.5-6.99L12.84,12.38z"/> <path d="M24.28,7.88V5.54h-3.24v15.48h3.24v-8.28c0-0.01,0.01-0.02,0.01-0.02c0-0.05-0.01-0.1-0.01-0.16 c0-2.29,1.74-4.14,3.88-4.14c0.54,0,1.05,0.12,1.52,0.33c0-0.95,0-1.9,0-2.85c-0.43-0.26-1.07-0.54-1.86-0.54 C26.27,5.36,25.13,6.14,24.28,7.88z"/> <path d="M37.6,18.5c-0.83,0-1.33-0.63-1.42-1.44h-0.02V8.42h2.88V5.54h-2.88V1.22L32.92,2.3v3.24H30.4v2.88h2.52v9.18 c0,1.51,0.89,2.82,2.18,3.42c0.49,0.23,1.03,0.36,1.6,0.36c1.06,0,2.01-0.44,2.7-1.14v-2.82h-0.02 C38.52,18.31,38.16,18.5,37.6,18.5z"/> <path d="M53.8,24.26c-1.32-0.44-2.88-3.6-2.88-3.6l-0.5-1.17l6.22-13.95h-3.73l-4.23,9.89l-4.19-9.8h-3.73l6.18,13.86 l1.74,3.89l0.07,0.16h0.01c0.08,0.16,0.15,0.31,0.23,0.45c1.02,1.77,3.37,4.54,7.69,2.92V23.6C55.96,24.26,54.82,24.6,53.8,24.26z "/> <path d="M67.66,6.69c-1.09-0.89-2.41-1.42-3.82-1.42c-3.8,0-6.88,3.77-6.88,8.41c0,4.64,3.08,8.41,6.88,8.41 c1.41,0,2.72-0.52,3.82-1.41c-0.03,1.51-0.8,2.93-2.11,3.68c-0.87,0.5-1.86,0.79-2.92,0.79c-1.98,0-3.74-0.64-4.86-2.19v3.47 c1.39,1.22,3.22,1.97,5.22,1.97c1.75,0,3.37-0.57,4.68-1.53c1.96-1.44,3.24-3.77,3.24-6.39V5.54h-3.24V6.69z M67.66,14.09v0.88 c-0.5,2.11-1.96,3.65-3.69,3.65c-2.14,0-3.87-2.34-3.87-5.22s1.73-5.22,3.87-5.22c1.73,0,3.19,1.53,3.69,3.65V14.09z"/> <path d="M83.32,6.26c-1.51-0.96-3.21-0.91-3.78-0.9c-0.4,0.01-1.6,0.06-2.7,0.54c-2.29,1-3.96,3.24-4.13,7.49 c0,0.05,0,0.1,0,0.16c0,4.52,3.3,8.19,7.38,8.19c1.95,0,3.72-0.84,5.04-2.21v-3.28c-1.35,1.6-3.27,2.61-5.4,2.61 c-0.18,0-0.36-0.01-0.54-0.02c-1.87-0.48-3.24-1.99-3.24-3.78c0-0.12,0.01-0.24,0.02-0.36c0.01-0.11,0.03-0.23,0.05-0.34 c0,0,0,0,0,0h8.85h1.03h0.31v-2.07c0-0.27-0.02-0.54-0.05-0.81C86.13,11.09,85.91,7.9,83.32,6.26z M82.76,11.48h-0.44h-3.74h-2.42 c0.33-1.26,1.41-3.42,3.48-3.29C82.6,8.19,82.77,11.35,82.76,11.48z"/> <path d="M100.25,9.87c0,0,0-0.01,0-0.01c-0.08-0.41-0.18-0.8-0.28-1.17c-0.54-1.77-1.65-2.62-2.78-3.01 c-1.69-0.58-3.42-0.11-3.42-0.11l0,0c-1.23,0.2-2.16,0.98-2.88,2.46v-2.5h-3.24v15.84h3.24v-8.48c0-0.01,0.01-0.02,0.01-0.02 c0-0.05-0.01-0.1-0.01-0.16c0-2.29,1.74-4.14,3.88-4.14l0.02,0c1.01,0,1.9,0.68,2.16,1.66c0.16,0.6,0.22,1.23,0.24,1.72v0.79 c0,0.04,0,0.06,0,0.06l0,0v8.57h3.24v-8.3v-1.32C100.42,11.13,100.37,10.49,100.25,9.87z"/> </g> <g fill="darkgray"> <path d="M109.24,22.46c-1.12-0.84-1.61-0.89-2.16-1.44c-0.12-0.12-0.2-0.4-0.11-0.64c0.19-0.54,1.29-0.75,2.09-0.51 c0.35,0.1,0.66,0.26,0.91,0.44v-1.19c-0.23-0.18-0.73-0.53-1.44-0.62c-0.26-0.03-1.04-0.13-1.8,0.36 c-0.19,0.12-0.7,0.49-0.95,1.17c-0.08,0.21-0.21,0.56-0.13,0.99c0.1,0.49,0.43,0.81,0.72,1.08c0.39,0.36,0.8,0.57,1.08,0.72 c0.21,0.12,0.8,0.43,1.08,0.72c0.23,0.23,0.4,0.41,0.42,0.69c0,0.05,0.02,0.26-0.09,0.44c-0.36,0.58-1.65,0.34-1.78,0.32 c-0.65-0.13-1.12-0.46-1.42-0.73l-0.02,0.01v1.52c0.39,0.24,1.16,0.65,2.16,0.64c0.37-0.01,0.9-0.02,1.44-0.36 c0.12-0.08,0.45-0.3,0.72-0.72c0.12-0.19,0.36-0.56,0.36-1.08c0-0.52-0.23-0.88-0.36-1.08C109.83,22.97,109.65,22.76,109.24,22.46 z"/> <path d="M113.68,20.66c-0.51,0-0.99,0.19-1.38,0.52v-0.52h-1.08v7.92h1.08v-2.77c0.39,0.33,0.87,0.52,1.38,0.52 c1.32,0,2.4-1.27,2.4-2.83S115.01,20.66,113.68,20.66z M113.64,25.15c-0.7,0-1.27-0.7-1.34-1.58v-0.35 c0.07-0.89,0.64-1.58,1.34-1.58c0.75,0,1.35,0.79,1.35,1.76C114.99,24.37,114.38,25.15,113.64,25.15z"/> <path d="M119.22,20.56c0,0-1.34-0.26-2.27,0.56v1.32c0,0,2.23-1.9,2.67,0.07c-1.8-0.31-2.67,0.81-2.67,0.81 c-1.29,1.57,0.09,2.55,0.09,2.55c0.96,0.74,2.15,0.1,2.6-0.2l0,0.44h1.17v-3.72C120.81,22.38,120.92,20.83,119.22,20.56z M118.73,25.15c-1.31,0.17-1.09-0.78-1.09-0.78c0.19-0.97,1.5-0.89,1.99-0.83l0,0.91C119.3,25.08,118.73,25.15,118.73,25.15z"/> <path d="M123.81,20.66c-1.48,0-2.33,1.25-2.33,2.79s0.84,2.79,2.33,2.79c0.54,0,1.04-0.17,1.46-0.45l0.07-0.05l0-1.11 c-0.3,0.32-0.72,0.53-1.18,0.53c-0.91,0-1.65-0.77-1.65-1.71c0-0.94,0.74-1.71,1.65-1.71c0.47,0,0.89,0.21,1.19,0.53l0-1.11 c-0.14-0.1-0.28-0.18-0.43-0.26C124.58,20.75,124.2,20.66,123.81,20.66z"/> <path d="M130.53,22.77c-0.01-0.13-0.08-1.24-0.98-1.8c-0.52-0.33-1.11-0.31-1.31-0.31c-0.14,0-0.55,0.02-0.93,0.19 c-0.79,0.34-1.37,1.12-1.43,2.59c0,0.02,0,0.04,0,0.05c0,1.56,1.14,2.83,2.55,2.83c0.67,0,1.28-0.29,1.74-0.76v-1.13 c-0.47,0.55-1.13,0.9-1.86,0.9c-0.06,0-0.13,0-0.19-0.01c-0.65-0.16-1.12-0.69-1.12-1.31c0-0.04,0-0.08,0.01-0.12 c0-0.04,0.01-0.08,0.02-0.12c0,0,0,0,0,0h3.06h0.36h0.11v-0.72C130.55,22.96,130.54,22.87,130.53,22.77z M129.21,22.77h-1.29 h-0.84c0.12-0.44,0.49-1.18,1.2-1.14c1.03,0,1.08,1.09,1.08,1.14H129.21z"/> </g> </g> </svg>');
+				span {
+					font-weight: bold;
+					font-size: 12px;
+					font-style: italic;
+					color: blue;
+					vertical-align: top;
+				}
+			}
+
+			a {
+                font-size: 11px;
+                color: #999;
+                text-decoration: none;
+                opacity: 0.7;
+                z-index: 5;
+                font-weight: 500;
+                letter-spacing: -0.2px;
+            }
+
+            a:hover {
+                color: #0366d6;
+                opacity: 1;
+                text-decoration: underline;
+            }
+		}
+
+		.foot {
+			margin-bottom: 4px;
+			width: 100%;
+			height: 160px;
+			--background: #f0f0f0;
+			display: flex;
+			flex-direction: column;
+
+			.apply-src {
+				display: none;
+				align-items: center;
+				font-size: 10px;
+				padding-left: 8px;
+				gap: 4px;
+				div {
+					display: flex;
+					align-items: center;
+				}
+			}
+			textarea {
+				--width: 100%;
+				height: 100%;
+				margin: 4px;
+				outline: none;
+				border: 1px solid #ccc;
+				border-radius: 8px;
+				resize: none;
+				padding: 8px;
+				background: white;
+				color: #333;
+			}
+			textarea:hover {
+				border: 1px solid #999;
+			}
+			textarea:focus {
+				border: 1px solid green;
+			}
+			textarea:disabled {
+				background-color: #f5f5f5; /* 연한 회색 배경 */
+				color: #999;               /* 글자색도 연하게 */
+				cursor: not-allowed;       /* 마우스 커서를 금지 모양으로 변경 */
+				border-color: #ddd;        /* 테두리 색상도 힘을 뺌 */
+			}
+		}
+	}
+}
+
+:host(nine-chat.collapse) {
+	width: 0px;
+	animation: collapse 0.1s ease-in-out forwards;
+	box-shadow: unset;
+
+    .menu {
+        display: none;
+    }
+
+	.expand-icon {
+		opacity: 0.3;
+		position: absolute;
+		width: 48px;
+		height: 40px;
+		bottom: 32px;
+		left: -48px;
+		background: white;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		border-top-left-radius: 18px;
+		border-bottom-left-radius: 18px;
+		cursor: pointer;
+		box-shadow: 0 0 8px 4px rgba(135, 206, 235, 0.95); /* ✅ 퍼지는 그림자 */
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: auto;
+		background-image: url('data:image/svg+xml;utf8,<svg width="32" height="32" fill="skyblue" xmlns="http://www.w3.org/2000/svg" strokeWidth="1.5" viewBox="-0.17090198558635983 0.482230148717937 41.14235318283891 40.0339509076386"><text x="-9999" y="-9999">ChatGPT</text><path d="M37.532 16.87a9.963 9.963 0 0 0-.856-8.184 10.078 10.078 0 0 0-10.855-4.835A9.964 9.964 0 0 0 18.306.5a10.079 10.079 0 0 0-9.614 6.977 9.967 9.967 0 0 0-6.664 4.834 10.08 10.08 0 0 0 1.24 11.817 9.965 9.965 0 0 0 .856 8.185 10.079 10.079 0 0 0 10.855 4.835 9.965 9.965 0 0 0 7.516 3.35 10.078 10.078 0 0 0 9.617-6.981 9.967 9.967 0 0 0 6.663-4.834 10.079 10.079 0 0 0-1.243-11.813zM22.498 37.886a7.474 7.474 0 0 1-4.799-1.735c.061-.033.168-.091.237-.134l7.964-4.6a1.294 1.294 0 0 0 .655-1.134V19.054l3.366 1.944a.12.12 0 0 1 .066.092v9.299a7.505 7.505 0 0 1-7.49 7.496zM6.392 31.006a7.471 7.471 0 0 1-.894-5.023c.06.036.162.099.237.141l7.964 4.6a1.297 1.297 0 0 0 1.308 0l9.724-5.614v3.888a.12.12 0 0 1-.048.103l-8.051 4.649a7.504 7.504 0 0 1-10.24-2.744zM4.297 13.62A7.469 7.469 0 0 1 8.2 10.333c0 .068-.004.19-.004.274v9.201a1.294 1.294 0 0 0 .654 1.132l9.723 5.614-3.366 1.944a.12.12 0 0 1-.114.01L7.04 23.856a7.504 7.504 0 0 1-2.743-10.237zm27.658 6.437l-9.724-5.615 3.367-1.943a.121.121 0 0 1 .113-.01l8.052 4.648a7.498 7.498 0 0 1-1.158 13.528v-9.476a1.293 1.293 0 0 0-.65-1.132zm3.35-5.043c-.059-.037-.162-.099-.236-.141l-7.965-4.6a1.298 1.298 0 0 0-1.308 0l-9.723 5.614v-3.888a.12.12 0 0 1 .048-.103l8.05-4.645a7.497 7.497 0 0 1 11.135 7.763zm-21.063 6.929l-3.367-1.944a.12.12 0 0 1-.065-.092v-9.299a7.497 7.497 0 0 1 12.293-5.756 6.94 6.94 0 0 0-.236.134l-7.965 4.6a1.294 1.294 0 0 0-.654 1.132l-.006 11.225zm1.829-3.943l4.33-2.501 4.332 2.5v5l-4.331 2.5-4.331-2.5V18z"/></svg>');
+	}
+	.expand-icon:hover {
+		opacity: 0.7;
+	}
+}
+
+
+
+
+
+:host(nine-ai-settings) {
+	z-index: 9;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: flex-start;
+	position: absolute;
+	background: #fff;
+	left: 0;
+	right: 30px;
+	top: 48px;
+	bottom: 0;
+	--opacity: 0;
+	padding-left: 16px;
+	padding-right: 16px;
+	gap: 0;
+	--transform: translateX(100%);
+	--transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+	transition: transform 0.3s ease-out;
+
+	.line {
+		font-size: 12px;
+		display: flex;
+	}
+
+	.line:first-of-type {
+		--margin-top: 32px;
+	}
+
+	.subject {
+		font-weight: 700;
+		height: 24px;
+		margin-top: 32px;
+	}
+
+	.contents {
+		--margin-left: 16px;
+		width: 100%;
+		gap: 32px;
+	}
+
+	.analyze {
+		font-weight: 400;
+		input[type="number"]::-webkit-inner-spin-button,
+		input[type="number"]::-webkit-outer-spin-button {
+			-webkit-appearance: none;
+			margin: 0;
+		}
+		input[type="number"] {
+			width: 32px;
+			text-align: center;
+			margin-left: 4px;
+			margin-right: 4px;
+		}
+		input[type="checkbox"] {
+			margin-left: 0;
+		}
+	}
+
+	label {
+		display: flex;
+		align-items: center;
+
+		input {
+			margin-bottom: 2px;
+		}
+	}
+
+	input[type="text"], input[type="number"] {
+		outline: none;
+		border-radius: 4px;
+		width: 100%;
+		height: 26px;
+		border: 1px solid #b1b2c8;
+		padding: 0 4px;
+		--margin-top: 8px;
+		color: #666;
+	}
+
+	select {
+		outline: none;
+		border-radius: 4px;
+		width: 100%;
+		height: 26px;
+		border: 1px solid #b1b2c8;
+		padding: 0 4px;
+		--margin-top: 8px;
+		color: #666;
+	}
+}
+
+:host(nine-ai-settings.expand) {
+	animation: slideLeft 0.3s ease-out forwards;
+}
+:host(nine-ai-settings:not(.expand)) {
+	animation: slideRight 0.3s ease-out forwards;
+}
+
+
+@keyframes slide {
+	0% { left: -40%; }
+	50% { left: 60%; }
+	100% { left: 100%; }
+}
+
+
+:host(nine-ai-tip-popup) {
+	dialog:modal {
+		/* [PC 기본값: 다시 견고하게 고정] */
+		width: 50vw;        /* 화면 너비의 절반 */
+		height: 50vh;       /* 화면 높이의 절반 */
+		min-width: 600px;   /* 너무 작아지는 것 방지 */
+		min-height: 450px;  /* 너무 작아지는 것 방지 */
+
+		padding: 0;
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		background: #333;
+		resize: none;
+		box-shadow: 0 0 32px 0 rgba(255, 255, 255, 0.2);
+		overflow: hidden;   /* 내부 요소 삐져나감 방지 */
+
+		div.body {
+			padding: 0;
+			height: 100%;   /* 부모 높이 꽉 채우기 */
+		}
+	}
+
+	/* [모바일 대응: 화면이 작을 때만 적용] */
+	@media (max-width: 768px) {
+		dialog:modal {
+			width: 90vw;
+			height: auto;
+			min-width: unset;
+			min-height: 300px;
+			max-height: 300px; /* 세로 모드에서는 300px이 아주 적당합니다 */
+		}
+	}
+
+	/* ✅ 가로 모드 (Landscape) 대응 */
+	@media (max-height: 500px) and (orientation: landscape) {
+		dialog:modal {
+			width: 50%;      /* 가로로 너무 길면 보기 싫으니 폭을 살짝 줄여줍니다 */
+			min-width: 50%;
+			max-width: 50%;
+			height: 80%;
+			min-height: 80%;
+			max-height: 80%; /* 화면 높이의 85%만 사용하여 위아래 여백 확보 */
+		}
+
+		/* 가로모드에서 내부 요소가 너무 꽉 차지 않게 패딩 조절 */
+		:host(nine-ai-loading-tips) .chat-message.loading-tips-message {
+			padding: 10px 0;
+		}
+
+		:host(nine-ai-loading-tips) .tip-image {
+			max-height: 120px; /* 이미지가 텍스트를 밀어내지 않도록 축소 */
+		}
+	}
+
+	.head { display: none; }
+
+	.dialog-content {
+		width: 100%;
+		height: 100%;
+		display: flex;
+	}
+}
+
+:host(nine-ai-loading-tips) {
+	/* 부모의 flex 영향을 받아도 찌그러지지 않게 설정 */
+	display: flex;
+	width: 100%;
+	height: 100%;
+	flex-direction: column;
+
+	.chat-message.loading-tips-message {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		height: 100%;
+		background-color: #333;
+		padding: 0;       /* 여백을 조금 더 넉넉히 */
+		box-sizing: border-box;
+	}
+
+	.loading-bar-wrapper {
+		width: 100%;
+		height: 3px;         /* 약간 더 선명하게 */
+		overflow: hidden;
+		position: relative;
+		border-radius: 4px;
+		margin-bottom: 16px;
+		flex-shrink: 0;      /* 로딩바 높이 고정 */
+	}
+
+	.loading-bar {
+		position: absolute;
+		height: 100%;
+		width: 40%;
+		background-color: cyan;
+		animation: slide 1.2s ease-in-out infinite;
+		background: linear-gradient(to right, #333 0%, cyan 50%, #333 100%);
+	}
+
+	.current-tip-wrapper {
+		height: auto;
+		min-height: 32px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin-bottom: 4px;
+		padding: 0 16px;
+		flex-shrink: 0;      /* 텍스트 영역 높이 고정 */
+	}
+
+	.current-tip {
+		font-size: 16px;
+		font-weight: 700;
+		color: azure;
+		text-align: center;
+		line-height: 1.5;
+	}
+
+	.tip-content {
+		flex: 1;             /* ⭐ 이미지가 남은 공간을 다 차지하도록 */
+		display: flex;
+		position: relative;
+		width: 100%;
+		overflow: hidden;    /* 이미지 넘침 방지 */
+	}
+
+	.tip-image-container {
+		padding: 0 16px;
+		width: 100%;
+		height: 100%;
+		display: flex;       /* JS에서 block/flex로 바꿀 때 대응 */
+		justify-content: center;
+		align-items: center;
+	}
+
+	.tip-image {
+		max-width: 100%;
+		max-height: 100%;    /* 부모 컨테이너(tip-content)를 넘지 않게 */
+		object-fit: contain; /* 비율 유지하며 꽉 채우기 */
+		filter: invert(0.8);
+	}
+}
+
+
+:host(nine-diff-popup),
+:host(nine-menu-diff-popup) {
+
+	div.buttons {
+		position: absolute;
+		right: 16px;
+		/* width: 100px; */
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-end;
+		z-index: 1;
+	}
+
+	button.save {
+		cursor: pointer;
+		outline: none;
+	}
+
+	dialog { width: calc(100% - 50px); height: calc(100% - 50px); }
+	.main-layout { width: 100%; height: 100%; display: flex; flex-direction: column; }
+	.diff-area { flex: 1; min-height: 0; }
+	.footer {
+		display: flex; justify-content: flex-end; gap: 10px;
+		padding: 12px;
+	}
+	.btn { padding: 8px 20px; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; font-weight: bold; }
+	.btn-confirm { background: #007bff; color: white; border: none; }
+	.btn-confirm[disabled] {
+		/* 1. 마우스 커서를 불가능(금지) 모양으로 변경 */
+		cursor: not-allowed;
+
+		/* 2. 버튼을 반투명하게 만들어 비활성화된 느낌 부여 */
+		opacity: 0.5;
+
+		/* 3. 혹시 모를 마우스 클릭/호버 이벤트 완전히 차단 */
+		pointer-events: none;
+
+		/* 4. (선택사항) 배경색이나 보더를 더 연한 회색 톤으로 다운 */
+		background-color: #e0e0e0;
+		color: #a0a0a0;
+		border-color: #d0d0d0;
+	}
+
+	.tab-pages .tab-page {
+		height: 100%;
+	}
+
+	nine-dialog {
+		display: flex;
+		flex-direction: column;
+		width: 85vw;
+		height: 80vh;      /* 팝업 전체 높이를 브라우저 화면의 80%로 제한 */
+		min-width: 900px;
+		overflow: hidden;  /* 다이얼로그 자체가 늘어나며 바깥 스크롤 생기는 현상 방지 */
+	}
+
+	/* 🎯 [핵심 교정]: 탭 영역이 남은 다이얼로그 높이를 100% 꽉 채우도록 설정 */
+	nine-tab {
+		flex: 1;
+		min-height: 0;     /* 플렉스 자식의 무한 늘어남 방지 (스크롤 유도 필수 속성) */
+		display: flex;
+		flex-direction: column;
+	}
+
+	.footer1111 {
+		display: flex;
+		justify-content: flex-end;
+		gap: 10px;
+		padding: 15px 0 0 0;
+		border-top: 1px solid #e5e7eb;
+	}
+}
+
+
+:host(nine-diff) {
+	width: 100%;
+	height: 100%;
+
+	.wrapper {
+		display: flex;
+		position: relative;
+		--gap: 8px;
+		--font-family: monospace;
+		height: 100%;
+	}
+	.panel {
+		width: 50%;
+		border: 1px solid #ccc;
+		--padding: 8px;
+		overflow: auto;
+		white-space: pre-wrap;
+		text-align: left;
+		display: flex;
+		justify-content: flex-start; /* 좌측 정렬 */
+		align-items: flex-start;     /* 상단 정렬 */
+		flex-direction: column;
+		box-sizing: border-box;
+	}
+	.panel pre {
+		margin: 0;
+		--padding: 8px;
+		text-align: left;
+		white-space: pre-wrap;
+		word-break: break-word;
+	}
+
+	.cm-editor {
+		height: 100%;
+		width: 100%;
+		--padding-left: 80px;
+	}
+	.cm-content { /* CodeMirror 텍스트 내용을 감싸는 내부 div */
+	}
+	/* 각 라인에 버튼 공간 확보 */
+
+	/* ideDiff.css */
+
+	/* 기본적인 CodeMirror 라인 포지셔닝 */
+	.cm-line {
+		position: relative;
+		--display: flex;
+		padding-left: 18px;
+	}
+
+	/* 병합 버튼 컨테이너 */
+	.cm-merge-button-container {
+		position: absolute;
+		height: 16px;
+		width: 16px; /* 버튼 너비 고정으로 겹침 방지 */
+		left: 2px; /* 라인 번호 영역 바로 옆에 배치. 필요에 따라 조절하세요. */
+		top: 50%;
+		transform: translateY(-50%);
+		--z-index: 1; /* 다른 요소 위에 표시되도록 Z-index를 높게 설정 */
+		display: flex;
+		--gap: 5px;
+		justify-content: center; /* 버튼 중앙 정렬 */
+	}
+
+	/* 병합 버튼 기본 스타일 */
+	.cm-merge-button {
+		--margin: 2px 0;
+		width: 100%;
+		border: none;
+		border-radius: 3px;
+		cursor: pointer;
+		opacity: 0.7; /* 기본적으로 약간 투명하게 */
+		transition: opacity 0.2s ease-in-out; /* 호버 시 부드러운 전환 */
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: auto;
+	}
+
+	/* 호버 시 버튼 불투명도 증가 */
+	.cm-merge-button:hover {
+		opacity: 1;
+		background-color: #e0e0e0;
+	}
+
+	/* AI 추천을 현재 소스에 '적용'하는 버튼 (오른쪽 TOBE 에디터에 붙음) */
+	.cm-merge-button.accept {
+		background-color: #4CAF50; /* 녹색 */
+		background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-arrow-left-short" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5"/></svg>');
+	}
+
+	/* AI의 삭제를 현재 소스 기준으로 '되돌리는' 버튼 (왼쪽 ASIS 에디터에 붙음) */
+	.cm-merge-button.revert {
+		background-color: #f44336; /* 빨간색 */
+		background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-x" viewBox="0 0 16 16"><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/></svg>');
+	}
+
+	/* 삽입된 라인 (AI 추천 소스에 새로 추가된 라인) 배경색 및 경계선 */
+	.cm-inserted-line-bg {
+		background-color: #e6ffed; /* 연한 녹색 */
+		--border-left: 3px solid #66bb6a; /* 진한 녹색 */
+	}
+
+	/* 삭제된 라인 (현재 소스에서 AI가 삭제한 것으로 판단된 라인) 배경색 및 경계선 */
+	.cm-deleted-line-bg {
+		background-color: #ffebe9; /* 연한 빨간색 */
+		--border-left: 3px solid #ef5350; /* 진한 빨간색 */
+	}
+
+	/* CodeMirror 선택 영역 배경색 */
+	.cm-selectionBackground {
+		background-color: #d7d4f9 !important; /* 보라색 계열 */
+	}
+
+	/* 텍스트 선택 시 배경색 (브라우저 기본 선택색 재정의) */
+	.cm-editor ::selection {
+		background-color: #d7d4f9 !important;
+		color: inherit !important; /* 텍스트 색상은 유지 */
+	}
+	.cm-editor::-moz-selection { /* Firefox를 위한 접두사 */
+		background-color: #d7d4f9 !important;
+		color: inherit !important;
+	}
+}
+
+:host(nine-chat-message) {
+	width: 100%;
+	height: 100%;
+	overflow: scroll;
+	margin-bottom: 16px;
+
+	nine-chat-me {
+		display: flex;
+		justify-content: flex-end;
+		padding: 5px;
+
+		.chat-message {
+			max-width: 70%;
+			padding: 8px 16px;
+			border-radius: 8px;
+			font-size: 14px;
+			background-color: #fef01b;
+			text-align: left;
+			color: #333;
+			align-self: flex-end;
+			position: relative;
+			box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.15);
+		}
+	}
+
+	nine-chat-ing {
+		display: flex;
+		justify-content: flex-start;
+		padding: 0;
+
+		.chat-message {
+			padding: 0px 8px;
+			color: #999;
+			align-self: flex-start;
+			text-align: left;
+			position: relative;
+			font-size: 32px;
+			font-weight: bold;
+		}
+	}
+
+	nine-chat-ai {
+		display: flex;
+		justify-content: flex-start;
+		padding: 5px;
+		flex-direction: column;
+
+		.chat-message {
+			max-width: 70%;
+			border-radius: 8px;
+			font-size: 14px;
+			background-color: #fff;
+			color: black;
+			align-self: flex-start;
+			text-align: left;
+			position: relative;
+			box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.15);
+			text-overflow: ellipsis;
+			padding: 8px 16px;
+			display: flex;
+			align-items: center;
+
+			div.message {
+				display: contents;
+				-webkit-line-clamp: 3;
+				-webkit-box-orient: vertical;
+				overflow: auto;
+				padding: 0;
+				flex-grow: 1;
+				/* 줄바꿈 강제 적용 */
+				/**word-wrap: break-word;*/ /* 긴 단어를 줄바꿈 */
+				overflow-wrap: anywhere; /* 텍스트 길이에 따라 자동 줄바꿈 */
+				white-space: normal; /* 공백 처리 */
+			}
+
+			span.more {
+				display: none;
+				right: 4px;
+				bottom: 0px;
+				font-size: 9px;
+				font-weight: 700;
+
+				a {
+					display: none;
+					position: relative;
+					color: green;
+					text-decoration: none;
+				}
+
+				a::after {
+					content: "";
+					position: absolute;
+					left: 0;
+					bottom: -2px;
+					width: 100%;
+					height: 2px;
+					background-color: green;
+					transform: scaleX(0);
+					transition: transform 0.3s ease-in-out;
+				}
+
+				a:hover::after {
+					transform: scaleX(1);
+				}
+			}
+		}
+
+		.grid {
+			margin-top: 8px;
+		}
+
+		.chat-menu {
+			display: flex;
+			justify-content: space-between; /* 좌우 정렬 */
+			align-items: center; /* 세로 중앙 정렬 */
+			width: 100%;
+			margin-top: 2px;
+
+			.left-menu{
+				display: flex;
+				gap: 4px;
+
+				.filter.disabled, .database.disabled {
+					pointer-events: none;
+					color: #ccc;
+				}
+
+				.filter, .database, .excel, .maximize {
+					margin-left: 0;
+					cursor: pointer;
+					color: #999;
+					width: 16px;
+					height: 16px;
+					background-repeat: no-repeat;
+					background-position: center;
+					background-size: auto;
+				}
+
+				.filter svg {
+					color: #999;
+				}
+
+				.filter:hover, .database:hover, .excel:hover, .maximize:hover {
+					color: green;
+				}
+
+				.filter {
+					background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray" viewBox="0 0 16 16"><path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z"/></svg>');
+				}
+				.database {
+					background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray" viewBox="0 0 16 16"><path d="M4.318 2.687C5.234 2.271 6.536 2 8 2s2.766.27 3.682.687C12.644 3.125 13 3.627 13 4c0 .374-.356.875-1.318 1.313C10.766 5.729 9.464 6 8 6s-2.766-.27-3.682-.687C3.356 4.875 3 4.373 3 4c0-.374.356-.875 1.318-1.313M13 5.698V7c0 .374-.356.875-1.318 1.313C10.766 8.729 9.464 9 8 9s-2.766-.27-3.682-.687C3.356 7.875 3 7.373 3 7V5.698c.271.202.58.378.904.525C4.978 6.711 6.427 7 8 7s3.022-.289 4.096-.777A5 5 0 0 0 13 5.698M14 4c0-1.007-.875-1.755-1.904-2.223C11.022 1.289 9.573 1 8 1s-3.022.289-4.096.777C2.875 2.245 2 2.993 2 4v9c0 1.007.875 1.755 1.904 2.223C4.978 15.71 6.427 16 8 16s3.022-.289 4.096-.777C13.125 14.755 14 14.007 14 13zm-1 4.698V10c0 .374-.356.875-1.318 1.313C10.766 11.729 9.464 12 8 12s-2.766-.27-3.682-.687C3.356 10.875 3 10.373 3 10V8.698c.271.202.58.378.904.525C4.978 9.71 6.427 10 8 10s3.022-.289 4.096-.777A5 5 0 0 0 13 8.698m0 3V13c0 .374-.356.875-1.318 1.313C10.766 14.729 9.464 15 8 15s-2.766-.27-3.682-.687C3.356 13.875 3 13.373 3 13v-1.302c.271.202.58.378.904.525C4.978 12.71 6.427 13 8 13s3.022-.289 4.096-.777c.324-.147.633-.323.904-.525"/></svg>');
+				}
+				.excel {
+					background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M14 4.5V14a2 2 0 0 1-2 2h-1v-1h1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5zM6.472 15.29a1.2 1.2 0 0 1-.111-.449h.765a.58.58 0 0 0 .254.384q.106.073.25.114.143.041.319.041.246 0 .413-.07a.56.56 0 0 0 .255-.193.5.5 0 0 0 .085-.29.39.39 0 0 0-.153-.326q-.152-.12-.462-.193l-.619-.143a1.7 1.7 0 0 1-.539-.214 1 1 0 0 1-.351-.367 1.1 1.1 0 0 1-.123-.524q0-.366.19-.639.19-.272.527-.422.338-.15.777-.149.457 0 .78.152.324.153.5.41.18.255.2.566h-.75a.56.56 0 0 0-.12-.258.6.6 0 0 0-.247-.181.9.9 0 0 0-.369-.068q-.325 0-.513.152a.47.47 0 0 0-.184.384q0 .18.143.3a1 1 0 0 0 .405.175l.62.143q.326.075.566.211a1 1 0 0 1 .375.358q.135.222.135.56 0 .37-.188.656a1.2 1.2 0 0 1-.539.439q-.351.158-.858.158-.381 0-.665-.09a1.4 1.4 0 0 1-.478-.252 1.1 1.1 0 0 1-.29-.375m-2.945-3.358h-.893L1.81 13.37h-.036l-.832-1.438h-.93l1.227 1.983L0 15.931h.861l.853-1.415h.035l.85 1.415h.908L2.253 13.94zm2.727 3.325H4.557v-3.325h-.79v4h2.487z"/></svg>');
+				}
+				.maximize {
+					background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707m4.344 0a.5.5 0 0 1 .707 0l4.096 4.096V11.5a.5.5 0 1 1 1 0v3.975a.5.5 0 0 1-.5.5H11.5a.5.5 0 0 1 0-1h2.768l-4.096-4.096a.5.5 0 0 1 0-.707m0-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707m-4.344 0a.5.5 0 0 1-.707 0L1.025 1.732V4.5a.5.5 0 0 1-1 0V.525a.5.5 0 0 1 .5-.5H4.5a.5.5 0 0 1 0 1H1.732l4.096 4.096a.5.5 0 0 1 0 .707"/></svg>');
+				}
+			}
+		}
+	}
+
+	nine-chat-progress {
+		display: flex;
+		justify-content: flex-start;
+		padding: 5px;
+		flex-direction: column;
+
+		.chat-message.progress-message {
+			max-width: 80%;
+			border-radius: 8px;
+			font-size: 14px;
+			background-color: #fff;
+			color: black;
+			align-self: flex-start;
+			text-align: left;
+			position: relative;
+			box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.15);
+			padding: 8px 16px; /* 버블 자체의 패딩 */
+		}
+
+		.progress-list {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+			--font-size: 12px;
+		}
+
+		.progress-item {
+			display: flex;
+			align-items: center; /* 번호, 텍스트, 점을 세로 중앙 정렬 */
+			margin-bottom: 5px;
+			color: #999; /* 기본 텍스트 색상 */
+			font-size: 1em; /* 부모 폰트 사이즈(14px)를 따르도록 */
+			line-height: 1.4; /* 가독성을 위해 줄 간격 추가 */
+		}
+
+		.progress-item:last-child {
+			margin-bottom: 0;
+		}
+
+		/* 번호 스타일 */
+		.progress-item .step-number {
+			--font-weight: bold;
+			margin-right: 5px; /* 번호와 텍스트 사이 간격 */
+			color: #999; /* 번호 색상 */
+		}
+
+		/* 텍스트 내용 */
+		.progress-item .text {
+			--flex-grow: 1; /* 텍스트가 공간을 채우도록 */
+			white-space: nowrap; /* 텍스트가 줄바꿈되지 않도록 */
+		}
+
+		/* 진행 중 점 애니메이션 */
+		.progress-item .animated-dots {
+			width: 20px; /* 점 공간 확보 */
+			text-align: left; /* 점이 왼쪽에서 시작되도록 */
+			font-weight: bold;
+		}
+
+		/* completed 상태 */
+		.progress-item.completed {
+			color: #333; /* 완료된 텍스트 색상 */
+			--font-weight: bold; /* 완료 시 굵게 */
+		}
+		.progress-item.completed .animated-dots::after {
+			content: '✓'; /* 체크마크 */
+			margin-left: 5px; /* 체크마크와 텍스트 사이 간격 */
+			color: #28a745;
+			font-size: 1.0em; /* 체크마크 크기 */
+			font-weight: bold;
+		}
+
+		.progress-item.completed .step-number {
+			color: #333; /* 번호 색상 */
+		}
+
+		/* pending 상태에만 애니메이션 점 표시 */
+		.progress-item.pending .animated-dots {
+			/* JS로 내용이 채워지므로 별도의 CSS 애니메이션은 필요 없음 */
+		}
+	}
+}
+
+:host(nine-exception-hook) {
+	display: flex;
+	width: 100%;
+	height: 100%;
+	color: inherit;
+	font-size: inherit;
+	line-height: inherit;
+
+	/* 내부 모든 엘리먼트의 여백 계산법을 어드민 기본형에 동기화 */
+	.nine-error-container *,
+	.nine-error-container *::before,
+	.nine-error-container *::after {
+		box-sizing: border-box;
+	}
+
+	.nine-error-container {
+		padding: 30px;
+		margin: 20px;
+		background-color: #FFF5F5;
+		border: 1px solid #FEB2B2;
+		border-radius: 8px;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	}
+
+	.nine-error-title {
+		color: #C53030;
+		margin-top: 0;
+		font-size: 18px;
+		font-weight: bold;
+	}
+
+	.nine-error-label {
+		margin: 10px 0 5px 0;
+		font-weight: bold;
+		color: #4A5568;
+	}
+
+	.nine-error-log {
+		background-color: #1A202C;
+		color: #EDF2F7;
+		padding: 15px;
+		border-radius: 6px;
+		overflow-x: auto;
+		white-space: pre-wrap;
+		font-family: 'Courier New', Courier, monospace;
+		font-size: 14px;
+	}
+
+	/* 💡 버튼 커스텀 디자인 세트 */
+	.nine-ai-btn {
+		background-color: #3182CE;
+		color: white;
+		padding: 10px 20px;
+		font-size: 14px;
+		font-weight: bold;
+		border: none;
+		border-radius: 6px;
+		cursor: pointer;
+		transition: background-color 0.2s ease;
+		white-space: nowrap;
+	}
+
+	.nine-ai-btn:hover {
+		background-color: #2B6CB0;
+	}
+
+	.nine-ai-btn:disabled {
+		background-color: #A0AEC0;
+		cursor: not-allowed;
+	}
+
+	.nine-ai-btn.loading {
+		background-color: #4A5568;
+		animation: pulse 1.5s infinite ease-in-out;
+	}
+
+	.nine-error-footer {
+		font-size: 14px;
+		color: #718096;
+	}
+}
+
+@keyframes pulse {
+	0% { opacity: 0.6; }
+	50% { opacity: 1; }
+	100% { opacity: 0.6; }
+}
+
+:host(nine-natural-query) {
+	.input-wrapper {
+		position: relative;
+		width: 100%;
+	}
+
+	input {
+		width: 100%;
+		padding: 8px 16px; /* 하단 padding을 충분히 주어 워터마크 공간 확보 */
+		font-size: 14px;
+		border: 1px solid #d1d5da;
+		border-radius: 6px;
+		box-sizing: border-box;
+		transition: border-color 0.2s, box-shadow 0.2s;
+	}
+
+	input::placeholder {
+		color: #d1d5da; /* 아주 연한 회색 */
+		opacity: 1;    /* 파이어폭스 대응 */
+	}
+
+	input:focus {
+		border-color: green;
+		--box-shadow: 0 0 0 3px rgba(3, 102, 214, 0.1);
+		outline: none;
+	}
+
+	/* 핵심: 워터마크 스타일 */
+	.watermark-link {
+		position: absolute;
+		right: 8px;
+		bottom: 2px;
+		font-size: 11px;
+		color: #999;
+		text-decoration: none;
+		opacity: 0.7;
+		z-index: 5;
+		font-weight: 500;
+		letter-spacing: -0.2px;
+	}
+
+	.watermark-link:hover {
+		color: #0366d6;
+		opacity: 1;
+		text-decoration: underline;
+	}
+}
+
+:host(nine-natural-query-result) {
+	display: block;
+	width: 100%;
+	height: 100%;
+	min-height: 200px; /* 초기 문구가 보일 만큼 최소 높이 확보 */
+	border: 1px solid #e1e4e8;
+	border-radius: 8px;
+	overflow: hidden;
+	box-sizing: border-box;
+
+	nine-grid {
+		width: 100%;
+		height: 100%;
+	}
+
+	.result-wrapper {
+		width: 100%;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		position: relative;
+		background: #fcfcfc;
+		padding: 16px;
+		box-sizing: border-box;
+	}
+
+	/* 1. 기본 상태: 그리드 컨테이너는 보이고, 안내 컨테이너는 숨김 */
+	#grid-container {
+		flex: 1;
+		width: 100%;
+		height: 100%;
+		display: block;
+	}
+
+	#no-result-container {
+		display: none;
+		flex: 1;
+		width: 100%;
+		height: 100%;
+	}
+
+	/* 2. 데이터가 없을 때 (.empty 클래스가 붙었을 때) 제어 */
+	.result-wrapper.empty #grid-container {
+		display: none;
+	}
+
+	.result-wrapper.empty #no-result-container {
+		display: flex; /* 보임 처리 */
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+	}
+
+	/* 3. 안내 문구 스타일 디테일 */
+	.no-result .main-message {
+		font-size: 1.2rem;
+		font-weight: 700;
+		color: #2d3748;
+		margin-bottom: 8px;
+	}
+
+	.no-result .sub-message {
+		font-size: 0.9rem;
+		color: #718096;
+		line-height: 1.5;
+	}
+
+	/* 내부 그리드 라이브러리 높이 보정 */
+	nine-grid {
+		width: 100%;
+		height: 100%;
+	}
+}

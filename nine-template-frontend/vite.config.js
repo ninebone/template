@@ -24,8 +24,10 @@ export default defineConfig({
       include: [/node_modules/], // 모든 node_modules의 CommonJS를 ESM으로 수용
       transformMixedEsModules: true,
     },
+    chunkSizeWarningLimit: 10000,
   },
   server: {
+    port: 5173,
     proxy: {
       "/api": {
         target: "http://localhost:8080", // 현재 가동 중인 백엔드 포트 유지

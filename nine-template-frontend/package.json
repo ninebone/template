@@ -10,10 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@ninebone/ai": "^0.1.98",
-    "@ninebone/mu": "^0.1.450",
-    "@ninebone/util": "^0.9.196",
-    "@ninebone/ux": "^0.10.281",
+    "@ninebone/ai": "1.0.1",
+    "@ninebone/mu": "1.0.1",
+    "@ninebone/util": "1.0.1",
+    "@ninebone/ux": "1.0.2",
     "exceljs": "^4.4.0",
     "ninegrid2": "^6.1448.1",
     "react": "^19.2.6",

@@ -90,4 +90,12 @@ copyFrontEnd.dependsOn(':nine-template-frontend:installAndBuild')
 
 // 💡 [핵심 수정] 로컬 기동(processResources) 시에는 프론트엔드 빌드를 수행하지 않습니다.
 // 대신 최종 배포 파일(bootJar)을 만들 때만 자동으로 빌드 및 복사가 수행되도록 설정합니다.
-bootJar.dependsOn(copyFrontEnd)
+bootJar.configure {
+    // Gradle 실행 인자(Task 목록) 중에 'bootJar'가 명확하게 단독으로 포함되어 있을 때만 실행
+    onlyIf {
+        gradle.startParameter.taskNames.contains('bootJar') ||
+                gradle.startParameter.taskNames.contains(':nine-template-backend:bootJar')
+    }
+    dependsOn copyFrontEnd
+}
+

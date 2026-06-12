@@ -8,6 +8,7 @@
 	z-index: 1002;
 	color: #fff;
 	font-weight: 200;
+	font-size: 12px;
 	background: #181A31;
 	--background: #333;
 	-webkit-box-shadow: 4px 4px 10px rgba(69, 65, 78, .06);
@@ -68,6 +69,7 @@
 
 	nine-side-menu-body {
 		display: flex;
+		gap: 0px;
 		padding: 10px; /* 여백 추가 */
 		height: 100%;
 		overflow: auto;
@@ -180,13 +182,13 @@
 
 
 		.expand-icon {
-			width: 8px;
-			height: 8px;
+			width: 16px;
+			height: 16px;
 			--border-left: 4px solid transparent;
 			--border-right: 4px solid transparent;
 			--border-top: 4px solid #ccc;
 			position: absolute;
-			right: 16px;
+			right: 0px;
 			background-repeat: no-repeat;
 			background-position: center;
 			background-size: auto;
@@ -231,6 +233,7 @@
 		&.collapse:not(.group):not(.hover) {
 			opacity: 0;
 			height: 0;
+			display: none;
 		}
 
 		&:hover {
@@ -324,6 +327,25 @@
 		}
 	}
 }
+
+:host(nine-side-menu.collapse:hover)  {
+	width: var(--max-width);
+	--animation: bounce 0.5s ease-in-out 1;
+
+	nine-side-menu-head {
+		.logo-box {
+			width: 100%;
+		}
+	}
+}
+
+:host(nine-side-menu:not(.collapse)),
+:host(nine-side-menu.hover) {
+    nine-side-menu-body {
+		gap: 8px;
+	}
+}
+
 :host(nine-side-menu:not(.collapse)) {
 	width: var(--max-width);
 
@@ -355,16 +377,7 @@
 	}
 }
 
-:host(nine-side-menu.collapse:hover)  {
-	width: var(--max-width);
-	--animation: bounce 0.5s ease-in-out 1;
 
-	nine-side-menu-head {
-		.logo-box {
-			width: 100%;
-		}
-	}
-}
 
 @keyframes bounce {
 	0%, 20%, 50%, 80%, 100% { transform: translateX(0); }
