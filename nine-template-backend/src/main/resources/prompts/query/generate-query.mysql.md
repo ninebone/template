@@ -11,6 +11,7 @@
     - 특정 기간(최근 7일): `A.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)`
 
 2. **문자열 결합 및 검색 (String Manipulation)**:
+    - 사용자의 입력이 특정 지역, 카테고리, 명칭 등 광범위하거나 모호한 키워드일 경우, 등호 연산자(=) 대신 반드시 LIKE CONCAT('%', '검색어', '%') 구조를 사용하여 부분 일치 검색이 되도록 하십시오.
     - 검색어 포함(LIKE): `A.user_name LIKE CONCAT('%', '김철수', '%')`
     - 여러 필드 결합: `CONCAT(A.first_name, ' ', A.last_name)`
 

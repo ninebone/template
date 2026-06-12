@@ -12,8 +12,9 @@
     - 특정 기간(최근 7일): `A.created_at >= NOW() - INTERVAL '7 days'`
 
 2. **문자열 결합 및 검색 (String Manipulation)**:
-    - 검색어 포함(LIKE/ILIKE): 표준 `||` 연산자 또는 `CONCAT`을 모두 지원합니다.
-    - **CRITICAL**: PostgreSQL은 대소문자를 구분하므로, 대소문자 무시 검색 요구사항 시 반드시 `ILIKE` 연산자를 활용하여 `A.user_name ILIKE '%' || '김철수' || '%'` 형태로 작성하십시오.
+   - 사용자의 입력이 특정 지역, 카테고리, 명칭 등 광범위하거나 모호한 키워드일 경우, 등호 연산자(=) 대신 반드시 LIKE '%' || '김철수' || '%' 구조를 사용하여 부분 일치 검색이 되도록 하십시오.
+   - 검색어 포함(LIKE/ILIKE): 표준 `||` 연산자 또는 `CONCAT`을 모두 지원합니다.
+   - **CRITICAL**: PostgreSQL은 대소문자를 구분하므로, 대소문자 무시 검색 요구사항 시 반드시 `ILIKE` 연산자를 활용하여 `A.user_name ILIKE '%' || '김철수' || '%'` 형태로 작성하십시오.
 
 3. **널 처리 및 명시적 타입 캐스팅 (Nulls & Type Casting)**:
     - 널 대체 함수는 표준 함수인 `COALESCE(A.point, 0)`를 사용하십시오. (MySQL의 IFNULL이나 Oracle의 NVL 사용 금지)
