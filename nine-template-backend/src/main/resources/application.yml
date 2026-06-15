@@ -26,3 +26,7 @@ nine:
   ai:
     gemini:
       api-key:
+      default-model: gemini-2.5-flash
+  stream:
+    max-concurrent: 10 # 동시 접속 제한 수
+    enabled: true
