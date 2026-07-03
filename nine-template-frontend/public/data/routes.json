@@ -29,6 +29,16 @@
   },
   {
     "level": 2,
+    "id": "nine-stat",
+    "path": "/nine/stat",
+    "parentId": "nine-default",
+    "name": "쿼리 통계",
+    "desc": "쿼리 통계",
+    "class": "icon-none",
+    "is-nine": true
+  },
+  {
+    "level": 2,
     "id": "example-1",
     "path": "/nine/example1",
     "parentId": "nine-default",

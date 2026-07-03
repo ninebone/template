@@ -189,6 +189,14 @@ nine-grid {
   height: 100%;
 }
 
+.chart-container canvas {
+    display: block;
+    width: 100% !important;
+    --height: 100% !important; /* 이 부분이 늘어남의 주범일 수 있음 */
+    min-width: 0;
+    min-height: 0;
+}
+
 nine-deck {
   position: relative;
   --padding: 0 0 32px 0 ;
