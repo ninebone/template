@@ -40,6 +40,6 @@
 
     <logger name="org.mybatis" level="INFO" />
 
-    <logger name="com.nine-template.domain" level="DEBUG" />
+    <logger name="com.nine.template.domain" level="DEBUG" />
 
 </configuration>
