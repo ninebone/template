@@ -11,9 +11,12 @@
   },
   "dependencies": {
     "@ninebone/ai": "1.0.1",
-    "@ninebone/mu": "1.0.1",
+    "@ninebone/mu": "^1.0.26",
     "@ninebone/util": "1.0.1",
     "@ninebone/ux": "1.0.2",
+    "chart.js": "^4.5.1",
+    "echarts": "^6.1.0",
+    "echarts-gl": "^2.1.0",
     "exceljs": "^4.4.0",
     "ninegrid2": "^6.1448.1",
     "react": "^19.2.6",

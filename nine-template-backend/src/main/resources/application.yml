@@ -14,13 +14,16 @@ mybatis:
 
 logging:
   level:
-    jdbc:
-      sqltiming: INFO
-      sqlonly: DEBUG
+    org.apache.ibatis: DEBUG
 
 server:
   port: 8080
   forward-headers-strategy: native
+
+app:
+  log:
+    path:
+    name: nine-template
 
 nine:
   ai:
