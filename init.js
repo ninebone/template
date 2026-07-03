@@ -23,6 +23,7 @@ function replaceFileContent(fullPath) {
 
     let content = fs.readFileSync(fullPath, 'utf8');
 
+    /**
     // -------------------------------------------------------------------------
     // 🛡️ [보호 마커 설정 구역] - 무차별 치환으로부터 진짜 자산들을 보호합니다.
     // -------------------------------------------------------------------------
@@ -34,6 +35,19 @@ function replaceFileContent(fullPath) {
     content = content.replace(/com\.ninelab\.ai/g, PROTECT_AI_MARKER);
     content = content.split('com.nine.template').join(`com.${packageNewName}`);
     content = content.split('com.nine').join(`com.${packageNewName}`);
+    */
+
+    const PROTECT_LAB_MARKER = '___NINE_LAB_PROTECTED___';
+    const PROTECT_NINELAB_MARKER = '___NINELAB_PROTECTED___'; // 'com.ninelab' 보호용
+
+    // 1. 보호할 대상을 마커로 먼저 치환
+    content = content.replace(/com\.nine-lab/g, PROTECT_LAB_MARKER);
+    content = content.replace(/com\.ninelab/g, PROTECT_NINELAB_MARKER); // 'com.ninelab.ai'도 자동으로 포함됨
+
+    // 2. 패키지명 변경 (정밀 치환)
+    content = content.split('com.nine.template').join(`com.${packageNewName}`);
+    content = content.split('com.nine').join(`com.${packageNewName}`);
+
 
     // 구조 및 폴더 명칭 싱크
     content = content.split('nine-template-backend').join(`${newName}-backend`);
@@ -45,8 +59,13 @@ function replaceFileContent(fullPath) {
         content = content.split('-Dspring.profiles.active=test').join('-Dspring.profiles.active=local');
     }
 
+    /**
     content = content.split(PROTECT_LAB_MARKER).join('com.nine-lab');
     content = content.split(PROTECT_AI_MARKER).join('com.ninelab.ai');
+    */
+    // 3. 보호 마커 복원
+    content = content.split(PROTECT_LAB_MARKER).join('com.nine-lab');
+    content = content.split(PROTECT_NINELAB_MARKER).join('com.ninelab');
 
     fs.writeFileSync(fullPath, content, 'utf8');
 }

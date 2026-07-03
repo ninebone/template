@@ -35,7 +35,7 @@
         <appender-ref ref="ASYNC" />
     </root>
 
-    <logger name="com.myapp1" level="DEBUG" />
+    <logger name="com.nine.template" level="DEBUG" />
     <logger name="org.apache.ibatis" level="DEBUG" />
 
     <logger name="org.mybatis" level="INFO" />
