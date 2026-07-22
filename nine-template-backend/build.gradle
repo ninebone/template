@@ -28,7 +28,7 @@ repositories {
 
 dependencies {
     // 1. 핵심 커스텀 엔진 (필요 시 주석 해제)
-    implementation("com.nine-lab:nine-mu:1.0.1")
+    implementation("com.nine-lab:nine-mu:1.0.2")
 
     // 2. 스프링 부트 웹 & 데이터베이스 환경 정리
     implementation 'org.springframework.boot:spring-boot-starter-web'

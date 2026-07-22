@@ -10,11 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@ninebone/ai": "1.0.1",
-    "@ninebone/grid": "0.0.275",
-    "@ninebone/mu": "1.0.26",
-    "@ninebone/util": "1.0.1",
-    "@ninebone/ux": "1.0.2",
+    "@ninebone/ai": "^1.0.9",
+    "@ninebone/grid": "^0.0.281",
+    "@ninebone/mu": "^1.0.28",
+    "@ninebone/util": "^1.0.24",
+    "@ninebone/ux": "^1.0.299",
     "chart.js": "^4.5.1",
     "echarts": "^6.1.0",
     "echarts-gl": "^2.1.0",
