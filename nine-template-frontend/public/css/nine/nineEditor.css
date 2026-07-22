@@ -10,7 +10,44 @@
 	background: white;
 	overflow: hidden; /* 에디터가 삐져나가지 않게 */
 
+	#file-input {
+		display: none;
+	}
 
+	#img-btn:disabled {
+		cursor: not-allowed;
+		pointer-events: none;
+	}
+
+	/* 이미지 컨테이너 */
+	.resizable-wrapper {
+		display: inline-block;
+		position: relative;
+		line-height: 0;
+	}
+
+	/* 리사이즈 핸들 */
+	.resizable-handle {
+		display: none;
+		position: absolute;
+		width: 8px;
+		height: 8px;
+		background: #68cef8;
+		right: -4px;
+		bottom: -4px;
+		cursor: nwse-resize;
+		border-radius: 50%;
+		z-index: 10;
+	}
+
+	.ProseMirror-selectednode {
+		outline: 2px solid #68cef8;
+		outline-offset: 0px;
+
+		.resizable-handle {
+			display: block;
+		}
+	}
 
 	#editor-container {
 		flex: 1;

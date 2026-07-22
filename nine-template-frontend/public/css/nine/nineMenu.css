@@ -1,3 +1,510 @@
+:host(nine-menu) {
+	position: fixed;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	width: 200px;
+	height: 200px;
+	background: #222;
+	border-radius: 12px;
+	padding: 10px;
+	gap: 5px;
+	cursor: default;
+	z-index: 10000;
+	user-select: none;
+	will-change: transform, left, top;
+	transition: all 0.3s ease;
+	pointer-events: auto; /* [수정] 드래그 시작을 위해 auto여야 함 */
+
+	#drag-ghost {
+		display: none;
+		position: fixed;
+		transform: translate(0%, 0%); /* 마우스 커서가 정중앙에 오게 함 */
+		pointer-events: none;
+		width: 100%;
+		height: 100%;
+	}
+
+	.menu-item {
+		background: #444;
+		border-radius: 4px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: white;
+		font-size: 12px;
+		cursor: pointer;
+		&:hover { background: #666; }
+	}
+
+	nine-menu-top-left, nine-menu-top-right, nine-menu-bottom-left, nine-menu-bottom-right, nine-menu-top-center, nine-menu-bottom-center, nine-menu-middle-left, nine-menu-middle-right {
+		display: none;
+	}
+}
+
+/* 드래그 중 상태 */
+:host(nine-menu.menu-state-dragging) {
+
+	transition: none ; /* [추가] 드래그 중엔 즉각 반응하도록 애니메이션 제거 */
+	position: fixed;
+	opacity: 0.5;
+	pointer-events: unset;
+    cursor: grab;
+
+	/* 만약 고스트가 커서 중앙에 오길 원하면 추가 */
+    width: 64px !important;
+    height: 64px !important;
+	background: rgba(0, 123, 255, 0.2);
+	border: 2px dashed #007bff;
+	transform: translate(-50%, -50%);
+
+    #main-menu {
+    	display: none; /* 고스트 등장 */
+    }
+	#drag-ghost {
+		display: block; /* 고스트 등장 */
+	}
+}
+
+/* 기본 위치 및 배치 속성 */
+:host(nine-menu.menu-state-top-left) {
+	width: 60px; height: 60px; top: 0; left: 0;
+	nine-menu-top-left {
+		display: block;
+	}
+}
+:host(nine-menu.menu-state-top-right) {
+	width: 60px; height: 60px; top: 0; right: 0;
+	nine-menu-top-right {
+		display: block;
+	}
+}
+:host(nine-menu.menu-state-bottom-left) {
+	width: 60px; height: 60px; bottom: 0; left: 0;
+	nine-menu-bottom-left {
+		display: block;
+	}
+}
+:host(nine-menu.menu-state-bottom-right) {
+	width: 60px; height: 60px; bottom: 0; right: 0;
+	nine-menu-bottom-right {
+		display: block;
+	}
+}
+
+:host(nine-menu.menu-state-top-center) {
+	width: 100%; height: 60px; top: 0; left: 0;
+	nine-menu-top-center {
+		display: block;
+	}
+}
+:host(nine-menu.menu-state-bottom-center) {
+	width: 100%; height: 60px; bottom: 0; left: 0;
+	nine-menu-bottom-center {
+		display: block;
+	}
+}
+
+:host(nine-menu.menu-state-middle-left) {
+	width: 60px; height: 100%; top: 0; left: 0;
+	nine-menu-middle-left {
+		display: block;
+	}
+}
+
+:host(nine-menu.menu-state-middle-right) {
+	width: 60px; height: 100%; top: 0; right: 0;
+	nine-menu-middle-right {
+		display: block;
+	}
+}
+
+:host(nine-menu.menu-state-center) {
+	width: 200px; height: 200px;
+	top: 50%; left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+
+:host(nine-menu-middle-left) {
+	opacity: 0.95;
+	width: unset;
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 1002;
+	color: #fff;
+	font-weight: 200;
+	font-size: 12px;
+	background: #181A31;
+	--background: #333;
+	-webkit-box-shadow: 4px 4px 10px rgba(69, 65, 78, .06);
+	-moz-box-shadow: 4px 4px 10px rgba(69, 65, 78, .06);
+	box-shadow: 4px 4px 10px rgba(69, 65, 78, .06);
+	overflow: hidden;
+	width: var(--min-width);
+	--transition: all .3s;
+	transition: width 0.2s ease-in-out;
+
+	display: flex;
+	flex-direction: column;
+
+	.body {
+		display: flex;
+		align-items: flex-start;
+		--align-items: center; /* 수직 중앙 정렬 */
+		margin-top: 32px; /* 여백 추가 */
+	}
+
+
+	nine-menu-middle-left-head {
+		display: flex;
+		--align-items: flex-start;
+		align-items: center; /* 수직 중앙 정렬 */
+		padding: 10px; /* 여백 추가 */
+		height: 40px;
+		justify-content: center;
+		--border: 2px solid red;
+
+		.logo-box {
+			color: #f0f0f0;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			text-align: center;
+			width: 100%;
+		}
+
+		.icon-box {
+			display: flex;
+			align-items: center;
+			overflow: hidden;
+
+			svg {
+				display: none;
+				opacity: 0;
+				transition: opacity 0.3s ease-in-out; /* 부드러운 전환을 위한 애니메이션 */
+			}
+		}
+
+		.icon {
+			fill: var(--icon-color); /* 아이콘 색상 */
+			cursor: pointer;
+			transition: opacity 0.3s ease-in-out; /* 부드러운 전환을 위한 애니메이션 */
+		}
+	}
+
+	nine-menu-middle-left-body {
+		display: flex;
+		gap: 0px;
+		padding: 10px; /* 여백 추가 */
+		height: 100%;
+		overflow: auto;
+		flex-direction: column;
+		justify-content: flex-start;
+		align-items: flex-start; /* 수직 중앙 정렬 */
+
+		ul.side-menu-body {
+			width: 100%;
+			padding: 0;
+			margin: 0;
+			display: flex;
+			flex-direction: column;
+			--align-items: center;
+		}
+	}
+
+	nine-menu-middle-left-foot {
+		display: flex;
+		--align-items: flex-start;
+		align-items: center; /* 수직 중앙 정렬 */
+		padding: 10px; /* 여백 추가 */
+		height: 40px;
+	}
+
+
+	nine-menu-middle-left-item {
+		padding: 0;
+		margin: 0;
+		position: relative;
+		display: flex;
+		align-items: unset;
+		--background-color: #333;
+		background-color: unset;
+		cursor: pointer;
+		max-height: 64px; /* 기본 높이 */
+		opacity: 1;
+		transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+		width: 100%;
+
+		.menubar {
+			display: inline-block;
+			--padding-left: 16px;
+			--margin-left: 16px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			transition: height 0.5s ease-out, padding 0.5s ease-out;
+			text-align: left;
+			--width: calc(100% - 36px);
+			--margin: 0;
+		}
+
+
+		li {
+			display: flex;
+			align-items: center;
+			padding: 0;
+			margin: 0;
+			position: relative;
+			color: unset;
+			font-weight: bold;
+			width: calc(100% + 36px);
+		}
+
+
+		.icon {
+			position: relative;
+			width: 16px;
+			height: 16px;
+			background-color: #d3d3d3; /* 기본 아이콘 색상 */
+
+			/* CSS 변수(--mask-url)를 여기에 딱 한 번만 연결해 둡니다 */
+			-webkit-mask-image: var(--mask-url);
+			mask-image: var(--mask-url);
+
+			-webkit-mask-repeat: no-repeat;
+			mask-repeat: no-repeat;
+			-webkit-mask-position: center center;
+			mask-position: center center;
+			-webkit-mask-size: contain;
+			mask-size: contain;
+
+			transition: width 0.5s ease-out, height 0.5s ease-out, background-color 0.2s;
+			margin-left: 8px;
+		}
+
+		/* 2️⃣ 개별 클래스에서는 SVG 주소 변수만 딱 정의 (코드량 급감!) */
+		.icon-home {
+			--mask-url: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5"/></svg>');
+		}
+
+		.icon-folder {
+			--mask-url: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a2 2 0 0 1 .342-1.31zM2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4zm4.69-1.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139q.323-.119.684-.12h5.396z"/></svg>');
+		}
+
+		.icon-base {
+			background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 16 16"><path d="M0 .5A.5.5 0 0 1 .5 0h15a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5H14v2h1.5a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5H14v2h1.5a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5H.5a.5.5 0 0 1-.5-.5v-3a.5.5 0 0 1 .5-.5H2v-2H.5a.5.5 0 0 1-.5-.5v-3A.5.5 0 0 1 .5 6H2V4H.5a.5.5 0 0 1-.5-.5zM3 4v2h4.5V4zm5.5 0v2H13V4zM3 10v2h4.5v-2zm5.5 0v2H13v-2zM1 1v2h3.5V1zm4.5 0v2h5V1zm6 0v2H15V1zM1 7v2h3.5V7zm4.5 0v2h5V7zm6 0v2H15V7zM1 13v2h3.5v-2zm4.5 0v2h5v-2zm6 0v2H15v-2z"/></svg>');
+		}
+
+		.icon-none {
+			display: none;
+		}
+
+
+
+		.menubar {
+			margin-left: 8px;
+		}
+
+
+		.expand-icon {
+			width: 16px;
+			height: 16px;
+			--border-left: 4px solid transparent;
+			--border-right: 4px solid transparent;
+			--border-top: 4px solid #ccc;
+			position: absolute;
+			right: 0px;
+			background-repeat: no-repeat;
+			background-position: center;
+			background-size: auto;
+			background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="white" class="bi bi-caret-down-fill" viewBox="0 0 16 16"><path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>');
+			animation: rotate-out 0.3s ease-in-out forwards;
+		}
+
+
+		a {
+			color: #999; /* 금색 */
+			text-decoration: none; /* 밑줄 제거 */
+		}
+
+		a:hover {
+			color: #ccc; /* 주황색 */
+			text-decoration: underline; /* 호버 시 밑줄 추가 */
+		}
+
+		&.collapse:not(.hover) .expand-icon {
+			display: none;
+		}
+		&:not(.group) .expand-icon {
+			display: none;
+		}
+
+		&.group {
+			height: 48px;
+		}
+		&:not(.group) {
+			height: 32px;
+
+			.icon-base {
+				display: none;
+			}
+		}
+
+		&.active {
+			--background-color: #999;
+			color: #9FF2FF;
+		}
+
+		&.collapse:not(.group):not(.hover) {
+			opacity: 0;
+			height: 0;
+			display: none;
+		}
+
+		&:hover {
+			filter: brightness(90%);
+		}
+
+
+
+		&.group .menubar {
+			font-weight: 700;
+		}
+		&:not(.group) .menubar {
+			font-weight: 400;
+		}
+		&.collapse:not(.hover) .menubar {
+			transition: width 0.5s ease-out, padding-left 0.5s ease-out;
+			width: 0;
+			padding-left: unset;
+		}
+
+
+		&.collapse:not(.hover)) li {
+		justify-content: center;
+	}
+
+
+		&.group li {
+			list-style-type: none;
+		}
+		&:not(.group) li {
+			list-style-type: unset;
+		}
+
+		/**
+		&:not(.group) li::before {
+			content: '•';
+			margin-right: 8px;
+			margin-left: 16px;
+		} */
+
+		&:not(.group) li:not(:has(.icon-home, .icon-base))::before {
+			content: '•';
+			margin-right: 8px;
+			margin-left: 16px;
+		}
+
+		&.collapse:not(.hover) .icon {
+			width: 20px;
+			height: 20px;
+		}
+		&.collapse:not(.hover) .menubar,
+		&.collapse:not(.hover) .expand-icon {
+			display: none;
+		}
+
+		&:not(.expand) .expand-icon {
+			transform: rotate(180deg);
+			animation: rotate-in 0.3s ease-in-out forwards;
+		}
+
+
+
+		&.collapse:not(.hover) {
+			.icon {
+				margin-left: 4px;
+			}
+		}
+
+
+		&.hide {
+			--display: none;
+			max-height: 0;
+			opacity: 0;
+			padding: 0;
+		}
+	}
+}
+
+
+:host(nine-menu-middle-left.collapse) {
+	width: var(--min-width);
+
+	nine-menu-middle-left-head {
+		.logo-box {
+			width: 0;
+			transition: width 0.5s ease-out;
+		}
+		.icon:first-child {
+			display: block;
+			opacity: 1;
+		}
+	}
+}
+
+:host(nine-menu-middle-left.collapse:hover)  {
+	width: var(--max-width);
+	--animation: bounce 0.5s ease-in-out 1;
+
+	nine-menu-middle-left-head {
+		.logo-box {
+			width: 100%;
+		}
+	}
+}
+
+:host(nine-menu-middle-left:not(.collapse)),
+:host(nine-menu-middle-left.hover) {
+	nine-menu-middle-left-body {
+		gap: 8px;
+	}
+}
+
+:host(nine-menu-middle-left:not(.collapse)) {
+	width: var(--max-width);
+
+	nine-menu-middle-left-head {
+		.logo-box {
+			width: 100%;
+		}
+		.icon:first-child {
+			display: none;
+			opacity: 0;
+		}
+		.icon:nth-child(2) {
+			display: block;
+			opacity: 1;
+		}
+		.icon:nth-child(3) {
+			display: none;
+			opacity: 0;
+		}
+		.icon-box:hover {
+			.icon:nth-child(2) {
+				display: none;
+			}
+			.icon:nth-child(3) {
+				display: block;
+				opacity: 1;
+			}
+		}
+	}
+}
+
+
 :host(nine-side-menu) {
 	opacity: 0.95;
 	width: unset;
@@ -137,34 +644,34 @@
 
 
 		.icon {
-            position: relative;
-            width: 16px;
-            height: 16px;
-            background-color: #d3d3d3; /* 기본 아이콘 색상 */
+			position: relative;
+			width: 16px;
+			height: 16px;
+			background-color: #d3d3d3; /* 기본 아이콘 색상 */
 
-            /* CSS 변수(--mask-url)를 여기에 딱 한 번만 연결해 둡니다 */
-            -webkit-mask-image: var(--mask-url);
-            mask-image: var(--mask-url);
+			/* CSS 변수(--mask-url)를 여기에 딱 한 번만 연결해 둡니다 */
+			-webkit-mask-image: var(--mask-url);
+			mask-image: var(--mask-url);
 
-            -webkit-mask-repeat: no-repeat;
-            mask-repeat: no-repeat;
-            -webkit-mask-position: center center;
-            mask-position: center center;
-            -webkit-mask-size: contain;
-            mask-size: contain;
+			-webkit-mask-repeat: no-repeat;
+			mask-repeat: no-repeat;
+			-webkit-mask-position: center center;
+			mask-position: center center;
+			-webkit-mask-size: contain;
+			mask-size: contain;
 
-            transition: width 0.5s ease-out, height 0.5s ease-out, background-color 0.2s;
-            margin-left: 8px;
-        }
+			transition: width 0.5s ease-out, height 0.5s ease-out, background-color 0.2s;
+			margin-left: 8px;
+		}
 
-        /* 2️⃣ 개별 클래스에서는 SVG 주소 변수만 딱 정의 (코드량 급감!) */
-        .icon-home {
-            --mask-url: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5"/></svg>');
-        }
+		/* 2️⃣ 개별 클래스에서는 SVG 주소 변수만 딱 정의 (코드량 급감!) */
+		.icon-home {
+			--mask-url: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5"/></svg>');
+		}
 
-        .icon-folder {
-            --mask-url: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a2 2 0 0 1 .342-1.31zM2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4zm4.69-1.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139q.323-.119.684-.12h5.396z"/></svg>');
-        }
+		.icon-folder {
+			--mask-url: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a2 2 0 0 1 .342-1.31zM2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4zm4.69-1.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139q.323-.119.684-.12h5.396z"/></svg>');
+		}
 
 		.icon-base {
 			background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 16 16"><path d="M0 .5A.5.5 0 0 1 .5 0h15a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5H14v2h1.5a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5H14v2h1.5a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5H.5a.5.5 0 0 1-.5-.5v-3a.5.5 0 0 1 .5-.5H2v-2H.5a.5.5 0 0 1-.5-.5v-3A.5.5 0 0 1 .5 6H2V4H.5a.5.5 0 0 1-.5-.5zM3 4v2h4.5V4zm5.5 0v2H13V4zM3 10v2h4.5v-2zm5.5 0v2H13v-2zM1 1v2h3.5V1zm4.5 0v2h5V1zm6 0v2H15V1zM1 7v2h3.5V7zm4.5 0v2h5V7zm6 0v2H15V7zM1 13v2h3.5v-2zm4.5 0v2h5v-2zm6 0v2H15v-2z"/></svg>');
@@ -341,7 +848,7 @@
 
 :host(nine-side-menu:not(.collapse)),
 :host(nine-side-menu.hover) {
-    nine-side-menu-body {
+	nine-side-menu-body {
 		gap: 8px;
 	}
 }

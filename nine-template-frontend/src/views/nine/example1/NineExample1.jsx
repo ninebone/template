@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { api, trace } from "@ninebone/util";
-import ninegrid from "ninegrid2";
+import ninegrid from "@ninebone/grid";
 import { useScreen } from '@ninebone/mu';
 import Example1Detail from "./NineExample1Detail";
 import Example1Popup from "./NineExample1Popup";

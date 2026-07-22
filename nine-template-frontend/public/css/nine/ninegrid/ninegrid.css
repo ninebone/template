@@ -9,6 +9,7 @@ html {
 }
 */
 
+
 :host button {
 	color: unset;
 }
@@ -534,6 +535,36 @@ div.resizer-col-panel span {
 
 .ng-table thead th, .ng-table thead td {
 	position: relative;
+}
+
+:host(.auto-height) {
+    .ng-body {
+        overflow-y: scroll;
+
+        /* WebKit 브라우저 (Chrome, Edge, Safari) 스크롤바 항상 표시 */
+        &::-webkit-scrollbar {
+            width: 8px; /* 스크롤바의 너비 */
+            /* display: block; 기본적으로 block이 적용되지만, 필요 시 추가 */
+        }
+
+        &::-webkit-scrollbar-track {
+            background: #f1f1f1; /* 스크롤바 트랙(배경) 색상 */
+            border-radius: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: #888; /* 스크롤바 막대(손잡이) 색상 */
+            border-radius: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb:hover {
+            background: #555; /* 마우스 오버 시 막대 색상 */
+        }
+
+        /* Firefox 스크롤바 항상 표시 및 색상 지정 (최신 표준) */
+        scrollbar-width: thin; /* auto 또는 thin */
+        scrollbar-color: #888 #f1f1f1; /* 막대색상 배경색상 */
+    }
 }
 
 
