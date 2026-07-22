@@ -4,7 +4,7 @@
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <option name="MAIN_CLASS_NAME" value="com.nine.template.NineTemplateBackendApplication" />
     <module name="nine-template.nine-template-backend.main" />
-    <option name="VM_PARAMETERS" value="-Dspring.profiles.active=test" />
+    <option name="VM_PARAMETERS" value="-Dspring.profiles.active=local" />
     <option name="WORKING_DIRECTORY" value="$MODULE_WORKING_DIR$" />
     <extension name="net.ashald.envfile">
       <option name="IS_ENABLED" value="true" />
